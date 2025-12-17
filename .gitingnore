@@ -1,0 +1,45 @@
+# ---------------------------------
+# Build Artifacts (Compiler Output)
+# ---------------------------------
+Debug/
+Release/
+build/
+bin/
+*.elf
+*.bin
+*.hex
+*.map
+*.su
+*.list
+*.o
+*.d
+*.a
+
+# ---------------------------------
+# STM32CubeIDE / Eclipse Metadata
+# ---------------------------------
+# Ignore local workspace settings but KEEP project definition files
+.settings/
+.metadata/
+.launches/
+*.launch
+*.sh
+.mxproject
+
+# Note: .project and .cproject are required to import the project 
+# directly into the IDE. Do NOT ignore them unless you know what you are doing.
+# .project
+# .cproject
+
+# ---------------------------------
+# CubeMX Configuration
+# ---------------------------------
+# Never ignore the .ioc file, it is the heart of your configuration
+*.ioc.bak
+
+# ---------------------------------
+# OS Generated Files
+# ---------------------------------
+.DS_Store
+Thumbs.db
+
