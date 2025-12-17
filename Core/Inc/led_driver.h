@@ -1,10 +1,3 @@
-/*
- * led_driver.h
- *
- *  Created on: Dec 17, 2025
- *      Author: Antigravity
- */
-
 #ifndef INC_LED_DRIVER_H_
 #define INC_LED_DRIVER_H_
 

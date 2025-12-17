@@ -1,10 +1,3 @@
-/*
- * led_driver.c
- *
- *  Created on: Dec 17, 2025
- *      Author: Antigravity
- */
-
 #include "led_driver.h"
 #include "main.h"
 #include "spi.h"

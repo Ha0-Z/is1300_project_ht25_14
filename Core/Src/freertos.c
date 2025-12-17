@@ -19,9 +19,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
-#include "cmsis_os.h"
-#include "main.h"
 #include "task.h"
+#include "main.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -55,30 +55,30 @@ uint8_t varBlink2 = 0;
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
-    .name = "defaultTask",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityNormal,
+  .name = "defaultTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for Blink1Task */
 osThreadId_t Blink1TaskHandle;
 const osThreadAttr_t Blink1Task_attributes = {
-    .name = "Blink1Task",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityLow,
+  .name = "Blink1Task",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for Blink2Task */
 osThreadId_t Blink2TaskHandle;
 const osThreadAttr_t Blink2Task_attributes = {
-    .name = "Blink2Task",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityLow,
+  .name = "Blink2Task",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for TriggTask */
 osThreadId_t TriggTaskHandle;
 const osThreadAttr_t TriggTask_attributes = {
-    .name = "TriggTask",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityLow,
+  .name = "TriggTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,10 +94,10 @@ void Trigg(void *argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
- * @brief  FreeRTOS initialization
- * @param  None
- * @retval None
- */
+  * @brief  FreeRTOS initialization
+  * @param  None
+  * @retval None
+  */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 
@@ -121,8 +121,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-  defaultTaskHandle =
-      osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* creation of Blink1Task */
   Blink1TaskHandle = osThreadNew(Blink1, NULL, &Blink1Task_attributes);
@@ -140,6 +139,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
+
 }
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -149,45 +149,66 @@ void MX_FREERTOS_Init(void) {
  * @retval None
  */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument) {
+void StartDefaultTask(void *argument)
+{
   /* USER CODE BEGIN StartDefaultTask */
   LED_Driver_Init();
+  uint8_t state = 0;
 
   /* Infinite loop */
   for (;;) {
     HAL_GPIO_TogglePin(USR_LED1_GPIO_Port, USR_LED1_Pin);
 
-    // Pattern: Rolling Test - Light one LED at a time (Ignoring traffic rules)
-    // There are 24 bits in the shift register chain (3x 74HC595).
-    // We iterate from 0 to 23.
+    // Traffic Light Sequence
+    // Update LEDs is called at end of loop
 
-    HAL_GPIO_TogglePin(USR_LED1_GPIO_Port, USR_LED1_Pin);
+    // Safety clear at start of loop iteration
+    // LED_Driver.clear_all(); // Optional, but set_ functions overwrite bits so
+    // usually not needed if we set everything.
 
-    // Iterate through all 24 bits
-    for (int i = 0; i < 24; i++) {
-      uint32_t single_led_bit = (1 << i);
+    switch (state) {
+    case 0: // All RED
+      LED_Driver.set_traffic_signal(MODE_TL1, LIGHT_RED);
+      LED_Driver.set_traffic_signal(MODE_TL2, LIGHT_RED);
+      LED_Driver.set_traffic_signal(MODE_TL3, LIGHT_RED);
+      LED_Driver.set_traffic_signal(MODE_TL4, LIGHT_RED);
+      LED_Driver.set_pedestrian_signal(MODE_PL1, PED_LIGHT_RED);
+      LED_Driver.set_pedestrian_signal(MODE_PL2, PED_LIGHT_RED);
+      break;
 
-      // This function was added specifically for this low-level debugging
-      // You might need to add it to led_driver.h/.c if you used
-      // set_raw_bits_impl Or access via the driver struct if we exposed it.
-      // Note: In led_driver.c I added set_raw_bits_impl to the struct.
-      // Assuming interface is: void (*set_raw_bits)(uint32_t bits);
-      if (LED_Driver.set_raw_bits) {
-        LED_Driver.set_raw_bits(single_led_bit);
-      }
+    case 1: // TL1, TL2 Green (Car)
+      LED_Driver.set_traffic_signal(MODE_TL1, LIGHT_GREEN);
+      LED_Driver.set_traffic_signal(MODE_TL2, LIGHT_GREEN);
+      LED_Driver.set_traffic_signal(MODE_TL3, LIGHT_RED);
+      LED_Driver.set_traffic_signal(MODE_TL4, LIGHT_RED);
+      LED_Driver.set_pedestrian_signal(MODE_PL1, PED_LIGHT_RED);
+      LED_Driver.set_pedestrian_signal(MODE_PL2, PED_LIGHT_RED);
+      break;
 
-      // Fast roll: 100ms or 200ms
-      osDelay(200);
+    case 2: // TL1, TL2 Yellow
+      LED_Driver.set_traffic_signal(MODE_TL1, LIGHT_YELLOW);
+      LED_Driver.set_traffic_signal(MODE_TL2, LIGHT_YELLOW);
+      LED_Driver.set_traffic_signal(MODE_TL3, LIGHT_RED); // Keep others red
+      LED_Driver.set_traffic_signal(MODE_TL4, LIGHT_RED);
+      break;
+
+    case 3: // PL1, PL2 Green (Walk)
+      LED_Driver.set_traffic_signal(MODE_TL1, LIGHT_RED);
+      LED_Driver.set_traffic_signal(MODE_TL2, LIGHT_RED);
+      LED_Driver.set_traffic_signal(MODE_TL3, LIGHT_RED);
+      LED_Driver.set_traffic_signal(MODE_TL4, LIGHT_RED);
+      LED_Driver.set_pedestrian_signal(MODE_PL1, PED_LIGHT_GREEN);
+      LED_Driver.set_pedestrian_signal(MODE_PL2, PED_LIGHT_GREEN);
+      break;
     }
 
-    // Optional: Blink all once just to mark end of cycle
-    LED_Driver.clear_all();
-    osDelay(200);
-    if (LED_Driver.set_raw_bits)
-      LED_Driver.set_raw_bits(0xFFFFFF);
-    osDelay(200);
-    LED_Driver.clear_all();
-    osDelay(500);
+    LED_Driver.update_leds();
+
+    state++;
+    if (state > 3)
+      state = 0;
+
+    osDelay(1000); // 1 Second delay
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -199,7 +220,8 @@ void StartDefaultTask(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_Blink1 */
-void Blink1(void *argument) {
+void Blink1(void *argument)
+{
   /* USER CODE BEGIN Blink1 */
   /* Infinite loop */
   for (;;) {
@@ -215,7 +237,8 @@ void Blink1(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_Blink2 */
-void Blink2(void *argument) {
+void Blink2(void *argument)
+{
   /* USER CODE BEGIN Blink2 */
   /* Infinite loop */
   for (;;) {
@@ -234,7 +257,8 @@ void Blink2(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_Trigg */
-void Trigg(void *argument) {
+void Trigg(void *argument)
+{
   /* USER CODE BEGIN Trigg */
   /* Infinite loop */
   for (;;) {
@@ -261,3 +285,4 @@ void wait_cycles(uint32_t n) {
                : [count] "+r"(l));
 }
 /* USER CODE END Application */
+
