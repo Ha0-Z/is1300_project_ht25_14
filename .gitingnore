@@ -25,8 +25,8 @@ bin/
 *.launch
 *.sh
 .mxproject
-Debug/*
-Release/*
+Debug/
+Release/
 
 # Note: .project and .cproject are required to import the project 
 # directly into the IDE. Do NOT ignore them unless you know what you are doing.
