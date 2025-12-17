@@ -38,34 +38,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Project_Hao_Boling
+BUILD_ARTIFACT_NAME := RTOS_lab_Daniel
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Project_Hao_Boling.elf \
+RTOS_lab_Daniel.elf \
 
 MAP_FILES += \
-Project_Hao_Boling.map \
+RTOS_lab_Daniel.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Project_Hao_Boling.list \
+RTOS_lab_Daniel.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Project_Hao_Boling.elf secondary-outputs
+main-build: RTOS_lab_Daniel.elf secondary-outputs
 
 # Tool invocations
-Project_Hao_Boling.elf Project_Hao_Boling.map: $(OBJS) $(USER_OBJS) C:\Users\Daniel\STM32CubeIDE\workspace_1.16.1\RTOS_lab_Daniel\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Project_Hao_Boling.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Daniel\STM32CubeIDE\workspace_1.16.1\RTOS_lab_Daniel\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Project_Hao_Boling.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+RTOS_lab_Daniel.elf RTOS_lab_Daniel.map: $(OBJS) $(USER_OBJS) C:\Users\Daniel\STM32CubeIDE\workspace_1.16.1\RTOS_lab_Daniel\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "RTOS_lab_Daniel.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Daniel\STM32CubeIDE\workspace_1.16.1\RTOS_lab_Daniel\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="RTOS_lab_Daniel.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -74,14 +74,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Project_Hao_Boling.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Project_Hao_Boling.list"
+RTOS_lab_Daniel.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "RTOS_lab_Daniel.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Project_Hao_Boling.elf Project_Hao_Boling.list Project_Hao_Boling.map default.size.stdout
+	-$(RM) RTOS_lab_Daniel.elf RTOS_lab_Daniel.list RTOS_lab_Daniel.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

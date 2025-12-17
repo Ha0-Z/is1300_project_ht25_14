@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "spi.h"
+#include "LED_SPI.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,16 +49,18 @@
 uint8_t varBlink1 = 0;
 uint8_t varBlink2 = 0;
 uint8_t txbuffer[3] = {0b10010,0b10,0b10};
-uint8_t RED[3] = {0b1001,0b1001,0b1001};
+//uint32_t led_buffer = 	0x000000FF;
+
+/*uint8_t RED[3] = {0b1001,0b1001,0b1001};
 uint8_t YELLOW[3] = {0b10010,0b10,0b10};
 uint8_t GREEN[3] = {0b100100,0b10100,0b10100};
 //Note: MSB first bit on bus. [0] = U3
-uint32_t TL1_Red 	= 0b0001; 			//U1 Q0
-uint32_t TL1_Yellow = 0b0010; 			//U1 Q1
-uint32_t TL1_Green 	= 0b0100; 			//U1 Q2
-uint32_t PL1_Red 	= 0b1000; 			//U1 Q3
-uint32_t PL1_Green 	= 0b0001 <<  4; 	//U1 Q4
-uint32_t PL1_Blue 	= 0b0010 <<  4; 	//U1 Q5
+uint32_t TL1_Red 	= 0b0001 << 16; 			//U1 Q0
+uint32_t TL1_Yellow = 0b0010 << 16; 			//U1 Q1
+uint32_t TL1_Green 	= 0b0100 << 16; 			//U1 Q2
+uint32_t PL1_Red 	= 0b1000 << 16; 			//U1 Q3
+uint32_t PL1_Green 	= 0b0001 << 20; 	//U1 Q4
+uint32_t PL1_Blue 	= 0b0010 << 20; 	//U1 Q5
 
 uint32_t TL2_Red 	= 0b0001 <<  8; 	//U2 Q0
 uint32_t TL2_Yellow = 0b0010 <<  8; 	//U2 Q1
@@ -66,13 +69,14 @@ uint32_t PL2_Red 	= 0b1000 <<  8; 	//U2 Q3
 uint32_t PL2_Green 	= 0b0001 << 12; 	//U2 Q4
 uint32_t PL2_Blue 	= 0b0010 << 12; 	//U2 Q5
 
-uint32_t TL3_Red 	= 0b0001 << 16; 	//U3 Q0
-uint32_t TL3_Yellow = 0b0010 << 16; 	//U3 Q1
-uint32_t TL3_Green 	= 0b0100 << 16; 	//U3 Q2
-uint32_t TL4_Red 	= 0b1000 << 16; 	//U3 Q3
-uint32_t TL4_Yellow = 0b0001 << 20; 	//U3 Q4
-uint32_t TL4_Green 	= 0b0010 << 20; 	//U3 Q5
+uint32_t TL3_Red 	= 0b0001 <<  0; 	//U3 Q0
+uint32_t TL3_Yellow = 0b0010 <<  0; 	//U3 Q1
+uint32_t TL3_Green 	= 0b0100 <<  0; 	//U3 Q2
+uint32_t TL4_Red 	= 0b1000 <<  0; 	//U3 Q3
+uint32_t TL4_Yellow = 0b0001 <<  4; 	//U3 Q4
+uint32_t TL4_Green 	= 0b0010 <<  4; 	//U3 Q5
 
+uint32_t led_buffer = 0b0001 << 20;*/
 
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
@@ -179,16 +183,23 @@ void StartDefaultTask(void *argument)
   //HAL_GPIO_WritePin(S595_Enable_GPIO_Port,S595_Enable_Pin,GPIO_PIN_RESET);
   HAL_GPIO_WritePin(S595_Reset_GPIO_Port,S595_Reset_Pin,GPIO_PIN_SET);
   int8_t state = 4;
+  uint32_t led_buffer = PL1_Blue | TL3_Yellow;
+
+  //enum TL_State
+
   /* Infinite loop */
   for(;;)
   {
-  	uint32_t led_buffer = 	0x000000FF;/* |
+  	/*led_buffer = 	0x000000; |
   							TL4_Yellow |
 							TL3_Yellow |
 							TL1_Yellow; */
     //HAL_GPIO_TogglePin(LD2_GPIO_Port,LD2_Pin);
     HAL_GPIO_TogglePin(USR_LED1_GPIO_Port,USR_LED1_Pin);
-    if (HAL_SPI_Transmit(&hspi3, (uint8_t *) &led_buffer +3, 3, 1000) == HAL_ERROR){
+
+
+
+    if (HAL_SPI_Transmit(&hspi3, (uint8_t *) &led_buffer, 3, 1000) == HAL_ERROR){
       HAL_GPIO_TogglePin(USR_LED2_GPIO_Port,USR_LED2_Pin);
       
     } ; //Sending in Blocking mode
@@ -197,45 +208,9 @@ void StartDefaultTask(void *argument)
     osDelay(50);
     HAL_GPIO_WritePin(S595_STCP_GPIO_Port,S595_STCP_Pin,GPIO_PIN_RESET);
     HAL_Delay(1000);
-    switch (state)
-    {
-    case 0:
-      txbuffer[0] = RED[0];
-      txbuffer[1] = RED[1];
-      txbuffer[2] = RED[2];
-      break;
-    case 1:
-      /* code */
-      txbuffer[0] = YELLOW[0];
-      txbuffer[1] = YELLOW[1];
-      txbuffer[2] = YELLOW[2];
-      break;
-    case 2:
-      txbuffer[0] = GREEN[0];
-      txbuffer[1] = GREEN[1];
-      txbuffer[2] = GREEN[2];
-      /* code */
-      break;
-    case 3:
-    	uint32_t leds = PL1_Red |
-						PL2_Red |
-						PL1_Green |
-						PL2_Green  |
-						PL1_Blue |
-						PL2_Blue |
-						TL3_Yellow |
-						TL1_Yellow;
-												;
-		txbuffer[0] = leds >> 16;
-    	txbuffer[1] = leds >> 8;
-    	txbuffer[2] = leds ;//>> 0;
-    	break;
 
-    default:
-      //state = 0;
-      break;
-    }
-    //state = (state + 1) % 4;
+    //State machine for Task 2
+
   }
   /* USER CODE END StartDefaultTask */
 }
