@@ -4,15 +4,6 @@
 
 // Simple busy wait to avoid interrupt dependencies during unit testing
 // Approx for 80MHz Clock
-static void busy_wait_ms(uint32_t ms) {
-  // 1 ms = 80,000 cycles
-  // Use volatile to prevent optimization
-  volatile uint32_t iterations = ms * 20000;
-  while (iterations > 0) {
-    iterations--;
-    __asm("nop");
-  }
-}
 
 void Test_program(void) { test_led_driver(); };
 
@@ -82,6 +73,6 @@ void test_led_driver(void) {
     state++;
     if (state > 3)
       state = 0;
-    busy_wait_ms(500);
+    HAL_Delay(500);
   }
 }

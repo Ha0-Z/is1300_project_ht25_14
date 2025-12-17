@@ -71,9 +71,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-#ifdef RUN_TEST_PROGRAM
-  Test_program();
-#endif
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -100,7 +98,9 @@ int main(void)
   MX_SPI3_Init();
   MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
-
+#ifdef RUN_TEST_PROGRAM
+  Test_program();
+#endif
   /* USER CODE END 2 */
 
   /* Init scheduler */
