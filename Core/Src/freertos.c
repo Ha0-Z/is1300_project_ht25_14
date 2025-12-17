@@ -175,16 +175,20 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  HAL_GPIO_WritePin(USR_LED2_GPIO_Port,USR_LED2_Pin,GPIO_PIN_SET);
+  //HAL_GPIO_WritePin(USR_LED2_GPIO_Port,USR_LED2_Pin,GPIO_PIN_SET);
   //HAL_GPIO_WritePin(S595_Enable_GPIO_Port,S595_Enable_Pin,GPIO_PIN_RESET);
   HAL_GPIO_WritePin(S595_Reset_GPIO_Port,S595_Reset_Pin,GPIO_PIN_SET);
-  int8_t state = 0;
+  int8_t state = 4;
   /* Infinite loop */
   for(;;)
   {
+  	uint32_t led_buffer = 	0x000000FF;/* |
+  							TL4_Yellow |
+							TL3_Yellow |
+							TL1_Yellow; */
     //HAL_GPIO_TogglePin(LD2_GPIO_Port,LD2_Pin);
     HAL_GPIO_TogglePin(USR_LED1_GPIO_Port,USR_LED1_Pin);
-    if (HAL_SPI_Transmit(&hspi3,txbuffer, 3, 1000) == HAL_ERROR){
+    if (HAL_SPI_Transmit(&hspi3, (uint8_t *) &led_buffer +3, 3, 1000) == HAL_ERROR){
       HAL_GPIO_TogglePin(USR_LED2_GPIO_Port,USR_LED2_Pin);
       
     } ; //Sending in Blocking mode
@@ -213,17 +217,25 @@ void StartDefaultTask(void *argument)
       /* code */
       break;
     case 3:
-    	uint32_t leds = PL1_Blue || PL2_Blue;
+    	uint32_t leds = PL1_Red |
+						PL2_Red |
+						PL1_Green |
+						PL2_Green  |
+						PL1_Blue |
+						PL2_Blue |
+						TL3_Yellow |
+						TL1_Yellow;
+												;
 		txbuffer[0] = leds >> 16;
     	txbuffer[1] = leds >> 8;
-    	txbuffer[2] = leds >> 0;
+    	txbuffer[2] = leds ;//>> 0;
     	break;
 
     default:
-      state = 0;
+      //state = 0;
       break;
     }
-    state = (state + 1) % 4;
+    //state = (state + 1) % 4;
   }
   /* USER CODE END StartDefaultTask */
 }
