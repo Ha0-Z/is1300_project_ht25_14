@@ -1,14 +1,17 @@
 #include "unit_test.h"
 #include "led_driver.h"
 #include "main.h" // For HAL_Delay
+#include "screen.h"
 
 // Simple busy wait to avoid interrupt dependencies during unit testing
 // Approx for 80MHz Clock
 
 void Test_program(void) {
-  test_inputs();
+
   //	test_leds();
   //	test_led_driver();
+  //  test_inputs();
+  test_screen();
 }
 
 void test_leds(void) {
@@ -128,4 +131,11 @@ test_led_driver() {
       state = 0;
     HAL_Delay(500);
   }
+}
+
+void test_screen(void) {
+  screen_init();
+  screen_clear();
+  screen_test_checkerboard();
+  HAL_Delay(5000);
 }

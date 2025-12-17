@@ -90,6 +90,8 @@ void Error_Handler(void);
 #define TCK_GPIO_Port GPIOA
 #define PL1_Switch_Pin GPIO_PIN_15
 #define PL1_Switch_GPIO_Port GPIOA
+#define Disp_CS_Pin GPIO_PIN_11
+#define Disp_CS_GPIO_Port GPIOC
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 #define Disp_Reset_Pin GPIO_PIN_6

@@ -8,5 +8,7 @@ void Test_program(void);
 void test_leds(void);
 void test_led_driver(void);
 void test_inputs(void);
+void test_screen(void);
+void test_screen_char(void);
 
 #endif /* INC_UNIT_TEST_H_ */
