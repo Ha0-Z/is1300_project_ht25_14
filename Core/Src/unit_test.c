@@ -5,7 +5,39 @@
 // Simple busy wait to avoid interrupt dependencies during unit testing
 // Approx for 80MHz Clock
 
-void Test_program(void) { test_led_driver(); };
+void Test_program(void) {
+	test_leds();
+//	test_led_driver();
+}
+
+void test_leds(void) {
+	LED_Driver_Init();
+
+    HAL_GPIO_TogglePin(USR_LED1_GPIO_Port, USR_LED1_Pin);
+
+    // Pattern: Rolling Test - Light one LED at a time (Ignoring traffic rules)
+    // There are 24 bits in the shift register chain (3x 74HC595).
+    // We iterate from 0 to 23.
+
+    HAL_GPIO_TogglePin(USR_LED1_GPIO_Port, USR_LED1_Pin);
+
+    // Iterate through all 24 bits
+    for (int i = 0; i < 24; i++) {
+      uint32_t single_led_bit = (1 << i);
+
+      // This function was added specifically for this low-level debugging
+      // You might need to add it to led_driver.h/.c if you used
+      // set_raw_bits_impl Or access via the driver struct if we exposed it.
+      // Note: In led_driver.c I added set_raw_bits_impl to the struct.
+      // Assuming interface is: void (*set_raw_bits)(uint32_t bits);
+      if (LED_Driver.set_raw_bits) {
+        LED_Driver.set_raw_bits(single_led_bit);
+      }
+
+      HAL_Delay(1000);
+    }
+}
+
 
 void test_led_driver(void) {
   /* USER CODE BEGIN StartDefaultTask */
