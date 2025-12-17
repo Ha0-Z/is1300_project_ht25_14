@@ -1,0 +1,32 @@
+PC_10 (Serial3_TX) (SPI3_SCLK): 595_SHCP -> SPI3_SCK
+PC_11 (Serial3_RX) (SPI3_MISO): Disp_CS
+PC_12 (Serial5_TX) (SPI3_MOSI) (I2C2_SDA): UART_TX -> URT5_TX
+PD_02 (Serial5_RX): UART_RX -> URT5_RX
+PA_13: LIS2DW12TR_Int1 -> TMS
+PA_14: LIS2DW12TR_Int2 -> TCK
+PA_15 (PWM2/1) (SPI1_SSEL): PL1_Switch
+PB_07 (Serial1_RX) (PWM4/2) (I2C1_SDA): PL2_Switch
+PC_01 (SPI2_MOSI) (AnalogIn) (A4): I2C_SDA
+PC_03 (SPI2_MOSI) (AnalogIn): SPI_MOSI
+PC_00 (AnalogIn) (A6): I2C_SCL
+(PWM3/4) (I2C3_SDA) PC_09: Disp_Data/Instr -> Disp_Data
+(PWM3/3) PC_08: button3_A -> ?
+(D15) (CAN1_RD) (PWM4/3) (I2C1_SCL) PB_08: button3_center -> ?
+(PWM3/1) (Serial6_TX) PC_06: button3_B -> ?
+(D14) (SPI2_SSEL) (CAN1_TD) (PWM4/4) (I2C1_SDA) PB_09: button3_D ->
+(AnalogIn) (Serial3_RX) PC_05: button3_C -> ?
+(CAN1_TD) PA_12: CAN_TX -> ?
+(CAN1_RD) (PWM1/4) PA_11: CAN_RX -> ?
+(SPI2_SSEL) (CAN2_RD) PB_12: 595_STCP -> S595_STCP
+(D10) (Serial1_TX) (CAN2_TD) (PWM4/1) (I2C1_SCL) PB_06: Disp_Reset
+(D09) (SPI2_SCLK) (PWM3/2) (Serial6_RX) PC_07: 595_Enable -> TIM3_CH2
+(SPI3_MOSI) (PWM2/4) PB_02: USR_LED1
+(PWM1/3N) (AnalogIn) PB_01: Poti
+(D6) (SPI2_SCLK) (Serial3_TX) (PWM2/3) (I2C2_SCL) PB_10: SPI_SCLK -> SPI2_SCK
+(SPI2_MOSI) (PWM1/3N) PB_15: USR_LED2
+(SPI2_MISO) (PWM1/2N) PB_14: TL3_Car
+(D4) (SPI3_MOSI) (CAN2_RD) (PWM3/2) PB_05: 595_DS -> SPI3_MOSI
+(SPI2_SCLK) (CAN2_TD) (PWM1/1N) PB_13: TL2_Car
+(D2) (PWM1/3) (Serial1_RX) PA_10: TL4_Car -> SPI2_SCK
+(AnalogIn) PC_04: TL1_Car  -> ?
+
