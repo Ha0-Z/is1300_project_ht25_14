@@ -76,8 +76,14 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : TL1_Car_Pin button3_C_Pin button3_B_Pin button3_A_Pin */
-  GPIO_InitStruct.Pin = TL1_Car_Pin|button3_C_Pin|button3_B_Pin|button3_A_Pin;
+  /*Configure GPIO pin : TL1_Car_Pin */
+  GPIO_InitStruct.Pin = TL1_Car_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(TL1_Car_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : button3_C_Pin button3_B_Pin button3_A_Pin */
+  GPIO_InitStruct.Pin = button3_C_Pin|button3_B_Pin|button3_A_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -89,10 +95,10 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : TL2_Car_Pin TL3_Car_Pin button3_center_Pin button3_D_Pin */
-  GPIO_InitStruct.Pin = TL2_Car_Pin|TL3_Car_Pin|button3_center_Pin|button3_D_Pin;
+  /*Configure GPIO pins : TL2_Car_Pin TL3_Car_Pin PL2_Switch_Pin */
+  GPIO_InitStruct.Pin = TL2_Car_Pin|TL3_Car_Pin|PL2_Switch_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PC7 */
@@ -110,17 +116,12 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(Disp_Data_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : TL4_Car_Pin */
-  GPIO_InitStruct.Pin = TL4_Car_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(TL4_Car_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PL1_Switch_Pin */
-  GPIO_InitStruct.Pin = PL1_Switch_Pin;
+  /*Configure GPIO pins : TL4_Car_Pin PL1_Switch_Pin */
+  GPIO_InitStruct.Pin = TL4_Car_Pin|PL1_Switch_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(PL1_Switch_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
 
   /*Configure GPIO pin : PC12 */
   GPIO_InitStruct.Pin = GPIO_PIN_12;
@@ -138,11 +139,11 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF8_UART5;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PL2_Switch_Pin */
-  GPIO_InitStruct.Pin = PL2_Switch_Pin;
+  /*Configure GPIO pins : button3_center_Pin button3_D_Pin */
+  GPIO_InitStruct.Pin = button3_center_Pin|button3_D_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(PL2_Switch_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 

@@ -31,4 +31,11 @@ bool input_read_pl1(void);
 // Returns true if pressed
 bool input_read_pl2(void);
 
+// Read Car Presence Switches (TL1-TL4)
+// Returns true if active (Active Low assumed)
+bool input_read_tl1_car(void);
+bool input_read_tl2_car(void);
+bool input_read_tl3_car(void);
+bool input_read_tl4_car(void);
+
 #endif /* INC_INPUT_H_ */

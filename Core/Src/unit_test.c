@@ -10,10 +10,11 @@
 void Test_program(void) {
 
   //	test_leds();
-  //	test_led_driver();
-  test_inputs();
+  //test_led_driver();
+   // test_inputs();
   // test_screen();
   // test_joystick();
+  test_switches();
 }
 
 void test_leds(void) {
@@ -134,4 +135,40 @@ void test_screen(void) {
   screen_clear();
   screen_test_checkerboard();
   HAL_Delay(5000);
+}
+
+void test_switches(void) {
+	LED_Driver_Init();
+  while (1) {
+    // TL1 Switch -> Controls TL1 Signal
+    if (HAL_GPIO_ReadPin(TL1_Car_GPIO_Port, TL1_Car_Pin) == GPIO_PIN_SET) {
+      LED_Driver.set_traffic_signal(MODE_TL1, LIGHT_GREEN);
+    } else {
+      LED_Driver.set_traffic_signal(MODE_TL1, LIGHT_RED);
+    }
+
+    // TL2 Switch -> Controls TL2 Signal
+    if (HAL_GPIO_ReadPin(TL2_Car_GPIO_Port, TL2_Car_Pin) == GPIO_PIN_SET) {
+      LED_Driver.set_traffic_signal(MODE_TL2, LIGHT_GREEN);
+    } else {
+      LED_Driver.set_traffic_signal(MODE_TL2, LIGHT_RED);
+    }
+
+    // TL3 Switch -> Controls TL3 Signal
+    if (input_read_tl3_car()) {
+      LED_Driver.set_traffic_signal(MODE_TL3, LIGHT_GREEN);
+    } else {
+      LED_Driver.set_traffic_signal(MODE_TL3, LIGHT_RED);
+    }
+
+    // TL4 Switch -> Controls TL4 Signal
+    if (input_read_tl4_car()) {
+      LED_Driver.set_traffic_signal(MODE_TL4, LIGHT_GREEN);
+    } else {
+      LED_Driver.set_traffic_signal(MODE_TL4, LIGHT_RED);
+    }
+
+    LED_Driver.update_leds();
+    HAL_Delay(50);
+  }
 }

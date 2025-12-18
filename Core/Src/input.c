@@ -41,3 +41,39 @@ bool input_read_pl1(void) {
 bool input_read_pl2(void) {
   return is_pressed(PL2_Switch_GPIO_Port, PL2_Switch_Pin);
 }
+
+// Car Switches (TL1-TL4)
+// Connected to Ground when pressed. Internal Pull-Ups are enabled in gpio.c.
+// Logic: LOW (GPIO_PIN_RESET) = Pressed (true)
+bool input_read_tl1_car(void) {
+	if( HAL_GPIO_ReadPin(TL1_Car_GPIO_Port, TL1_Car_Pin) == GPIO_PIN_SET ){
+		return true;
+	}else {
+	    return false;
+	}
+}
+
+bool input_read_tl2_car(void) {
+  if (HAL_GPIO_ReadPin(TL2_Car_GPIO_Port, TL2_Car_Pin) == GPIO_PIN_SET) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool input_read_tl3_car(void) {
+  if (HAL_GPIO_ReadPin(TL3_Car_GPIO_Port, TL3_Car_Pin) == GPIO_PIN_SET) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool input_read_tl4_car(void) {
+  // TL4 is on PA10
+  if (HAL_GPIO_ReadPin(TL4_Car_GPIO_Port, TL4_Car_Pin) == GPIO_PIN_SET) {
+    return true;
+  } else {
+    return false;
+  }
+}
