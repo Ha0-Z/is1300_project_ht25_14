@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "task3.h"
+
 // Simple busy wait to avoid interrupt dependencies during unit testing
 // Approx for 80MHz Clock
 
@@ -16,16 +18,19 @@ void Test_program(void) {
 
   //	test_leds();
   // test_led_driver();
-  // test_inputs();
+ test_inputs();
   // test_screen();
   // test_joystick();
   // test_switches();
-  // task1();
+  //task1();
   // task2();
   // test_uart();
   // test_uart_input();
-  test_config_logic();
-  test_config_uart();
+  // Configuration Tests (Run these once to verify config works)
+  // test_config_logic();
+  // test_config_uart();
+
+  //test_task3();
 }
 
 void test_leds(void) {
@@ -66,7 +71,7 @@ void test_inputs(void) {
   while (1) {
     // Check PL1 via Input Driver
     if (input_read_pl1()) {
-      LED_Driver.set_raw_bits(0xFFFFFF); // All On
+      LED_Driver.set_raw_bits(0x01); // All On
     }
     // Check PL2 via Input Driver
     else if (input_read_pl2()) {
@@ -283,5 +288,24 @@ void test_config_uart(void) {
     // Small delay to prevent tight loop starvation if we were using RTOS (not
     // strictly needed here but good practice)
     HAL_Delay(10);
+  }
+}
+
+void test_task3(void) {
+  LED_Driver_Init();
+  config_init(); // Ensure configs are loaded
+
+  // Optional: Print start message
+  char msg[] = "\r\nStarting Task 3 (Integrated Control)...\r\n";
+  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+
+  while (1) {
+    // Run Main Task Logic
+    task3();
+
+    // Also allow configuration updates during runtime
+    task_config_poller();
+
+    HAL_Delay(100); // Small delay to prevent tight loop
   }
 }

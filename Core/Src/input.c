@@ -46,11 +46,11 @@ bool input_read_pl2(void) {
 // Connected to Ground when pressed. Internal Pull-Ups are enabled in gpio.c.
 // Logic: LOW (GPIO_PIN_RESET) = Pressed (true)
 bool input_read_tl1_car(void) {
-	if( HAL_GPIO_ReadPin(TL1_Car_GPIO_Port, TL1_Car_Pin) == GPIO_PIN_SET ){
-		return true;
-	}else {
-	    return false;
-	}
+  if (HAL_GPIO_ReadPin(TL1_Car_GPIO_Port, TL1_Car_Pin) == GPIO_PIN_SET) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 bool input_read_tl2_car(void) {

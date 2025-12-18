@@ -15,5 +15,6 @@ void test_uart(void);
 void test_uart_input(void);
 void test_config_logic(void);
 void test_config_uart(void);
+void test_task3(void);
 
 #endif /* INC_UNIT_TEST_H_ */
