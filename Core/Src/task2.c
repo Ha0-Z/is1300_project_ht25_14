@@ -11,15 +11,7 @@
 #include "led_driver.h"
 #include "main.h"
 
-// Task 2 requirements
-// R2.1 Vert=TL1/3, Horiz=TL2/4
-// R2.2 No overlaps
-// R2.3 Transitions via Orange (orangeDelay)
-// R2.4 Ghost Town: Toggle every greenDelay if NO cars
-// R2.5 Green stays if Active cars & No waiters
-// R2.6 Forced Yield: Switch if Active & Waiter > redDelayMax
-// R2.7 Immediate Yield: Switch if Empty & Waiter
-// R2.8 Init: Vert Green, Horiz Red
+// Task 2: Smart Traffic Intersection Logic
 
 typedef enum {
   STATE_VERTICAL_PASS,
@@ -58,7 +50,7 @@ void task2(void) {
   uint32_t waiter_arrival_time = 0;          // Track when other lane arrived
   bool waiting = false;                      // Is other lane waiting?
 
-  // R2.8 Init: Vertical Green, Horizontal Red
+  // Init: Vertical Green, Horizontal Red
   set_vertical_lights(LIGHT_GREEN);
   set_horizontal_lights(LIGHT_RED);
   LED_Driver.update_leds();
@@ -86,17 +78,18 @@ void task2(void) {
       }
 
       bool switch_to_horizontal = false;
-      // R2.4 Ghost Town: Switch if BOTH empty & time > greenDelay
+      bool switch_to_horizontal = false;
+      // Ghost Town: Switch if BOTH empty & time > greenDelay
       if (!v_busy && !h_busy) {
         if ((current_time - state_start_time) >= g_greenDelay) {
           switch_to_horizontal = true;
         }
       }
-      // R2.7 Immediate Yield: Vert Empty & Horiz Waiting
+      // Immediate Yield: Vert Empty & Horiz Waiting
       else if (!v_busy && h_busy) {
         switch_to_horizontal = true;
       }
-      // R2.6 Forced Yield: Vert Busy & Horiz Waiting longer than Max
+      // Forced Yield: Vert Busy & Horiz Waiting longer than Max
       else if (v_busy && h_busy) {
         if ((current_time - waiter_arrival_time) >= g_redDelayMax) {
           switch_to_horizontal = true;
@@ -112,7 +105,7 @@ void task2(void) {
 
     case STATE_VERTICAL_STOP:              // Vert Green -> Red
       set_vertical_lights(LIGHT_YELLOW);   // Orange
-      set_horizontal_lights(LIGHT_YELLOW); // Orange (PlantUML says both Orange)
+      set_horizontal_lights(LIGHT_YELLOW); // Orange
 
       if ((current_time - state_start_time) >= g_orangeDelay) {
         state = STATE_HORIZONTAL_PASS;
@@ -137,17 +130,18 @@ void task2(void) {
       }
 
       bool switch_to_vertical = false;
-      // R2.4 Ghost Town
+      bool switch_to_vertical = false;
+      // Ghost Town
       if (!h_busy && !v_busy) {
         if ((current_time - state_start_time) >= g_greenDelay) {
           switch_to_vertical = true;
         }
       }
-      // R2.7 Immediate Yield
+      // Immediate Yield
       else if (!h_busy && v_busy) {
         switch_to_vertical = true;
       }
-      // R2.6 Forced Yield
+      // Forced Yield
       else if (h_busy && v_busy) {
         if ((current_time - waiter_arrival_time) >= g_redDelayMax) {
           switch_to_vertical = true;

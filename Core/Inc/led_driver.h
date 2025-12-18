@@ -1,3 +1,9 @@
+/*
+ * led_driver.h
+ *
+ *  Created on: Dec 17, 2025
+ *      Author: Hao Zhang
+ */
 #ifndef INC_LED_DRIVER_H_
 #define INC_LED_DRIVER_H_
 
@@ -28,23 +34,50 @@ typedef enum {
 
 // Driver Struct Interface
 typedef struct {
-  // Sets the state of a traffic signal (Car)
+  /**
+  @brief Sets the state of a traffic signal (Car).
+  @param dir The traffic light direction (e.g., MODE_TL1).
+  @param state The desired light state (RED, YELLOW, GREEN).
+  @return void
+   */
   void (*set_traffic_signal)(TrafficDirection dir, TrafficLightState state);
 
-  // Sets the state of a pedestrian signal
+  /**
+  @brief Sets the state of a pedestrian signal.
+  @param dir The pedestrian light direction (e.g., MODE_PL1).
+  @param state The desired light state (RED, GREEN).
+  @return void
+   */
   void (*set_pedestrian_signal)(PedestrianDirection dir,
                                 PedestrianLightState state);
 
-  // Sets the state of the pedestrian indicator (Blue LED / "Walking Person")
+  /**
+  @brief Sets the state of the pedestrian indicator (Blue LED).
+  @param dir The pedestrian direction.
+  @param on True to turn on, False to turn off.
+  @return void
+   */
   void (*set_pedestrian_indicator)(PedestrianDirection dir, bool on);
 
-  // Updates the physical LEDs (shifts data out)
+  /**
+  @brief Updates the physical LEDs by shifting out data via SPI.
+  @param void
+  @return void
+   */
   void (*update_leds)(void);
 
-  // Clears the internal buffer (all off)
+  /**
+  @brief Clears the internal buffer and turns off all LEDs.
+  @param void
+  @return void
+   */
   void (*clear_all)(void);
 
-  // DEBUG: Set raw 24-bit value
+  /**
+  @brief DEBUG: Sets the raw 24-bit value of the shift registers.
+  @param bits The 24-bit integer representing the LED states.
+  @return void
+   */
   void (*set_raw_bits)(uint32_t bits);
 
 } TrafficLightDriver;
@@ -52,7 +85,11 @@ typedef struct {
 // Access the global driver instance
 extern const TrafficLightDriver LED_Driver;
 
-// Initialization function (call this in main or before task starts)
+/**
+@brief Initializes the LED Driver and Shift Registers.
+@param void
+@return void
+ */
 void LED_Driver_Init(void);
 
 #endif /* INC_LED_DRIVER_H_ */

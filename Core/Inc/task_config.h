@@ -8,8 +8,11 @@
 #ifndef INC_TASK_CONFIG_H_
 #define INC_TASK_CONFIG_H_
 
-// This function needs to be called frequently (polled)
-// or run in its own RTOS task.
+/**
+@brief Polls the UART for configuration commands and updates settings.
+@param void
+@return void
+ */
 void task_config_poller(void);
 
 #endif /* INC_TASK_CONFIG_H_ */

@@ -36,7 +36,6 @@ void config_init(void) {
 bool config_set_value(uint8_t id, uint16_t value) {
   switch (id) {
   case CONFIG_ID_TOGGLE_FREQ:
-    // Rule: Must be > 0
     if (value > 0) {
       g_toggleFreq = value;
       return true;
@@ -44,7 +43,6 @@ bool config_set_value(uint8_t id, uint16_t value) {
     break;
 
   case CONFIG_ID_PEDESTRIAN_DELAY:
-    // Rule: Must be > orangeDelay (Implicit from Task 1 logic)
     if (value > g_orangeDelay) {
       g_pedestrianDelay = value;
       return true;
@@ -52,7 +50,6 @@ bool config_set_value(uint8_t id, uint16_t value) {
     break;
 
   case CONFIG_ID_WALKING_DELAY:
-    // Rule: Must be > 0
     if (value > 0) {
       g_walkingDelay = value;
       return true;
@@ -60,9 +57,6 @@ bool config_set_value(uint8_t id, uint16_t value) {
     break;
 
   case CONFIG_ID_ORANGE_DELAY:
-    // Rule: Must be > 0 AND checking pedestrianDelay constraint
-    // If we increase orangeDelay, verify it doesn't violate pedestrianDelay >
-    // orangeDelay
     if (value > 0 && g_pedestrianDelay > value) {
       g_orangeDelay = value;
       return true;

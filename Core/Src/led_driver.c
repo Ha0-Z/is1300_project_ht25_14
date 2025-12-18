@@ -2,15 +2,10 @@
 #include "main.h"
 #include "spi.h"
 
-// Internal State Buffer
-// We use a uint32_t to hold the state of all 24 bits
-// mapping matches the bitmasks from the original code
-// Byte 0 (LSB): U1 (TL1, PL1)
-// Byte 1: U2 (TL2, PL2)
-// Byte 2: U3 (TL3, TL4)
+// Internal State Buffer (24 bits)
 static uint32_t led_state_buffer = 0;
 
-// Internal helper to set/clear bits
+// Modify bits in the buffer
 static void modify_bits(uint32_t mask, uint32_t value_bits) {
   led_state_buffer &= ~mask;      // Clear target bits
   led_state_buffer |= value_bits; // Set new bits
@@ -22,11 +17,6 @@ static void modify_bits(uint32_t mask, uint32_t value_bits) {
 #define U3_OFFSET 16
 
 // Mappings for Traffic Lights (Red, Yellow, Green)
-// Each TL uses 3 bits.
-// TL1: U1 Q0-Q2
-// TL2: U2 Q0-Q2
-// TL3: U3 Q0-Q2
-// TL4: U3 Q3-Q5
 
 // Helper to get shift amount for a given direction
 static int get_tl_shift(TrafficDirection dir) {
@@ -74,8 +64,6 @@ static void set_traffic_signal_impl(TrafficDirection dir,
 }
 
 // Mappings for Pedestrian Lights
-// PL1: U1 Q3-Q5 (Red, Green, Blue)
-// PL2: U2 Q3-Q5 (Red, Green, Blue)
 
 static int get_pl_shift(PedestrianDirection dir) {
   switch (dir) {
@@ -122,9 +110,7 @@ static void set_pedestrian_indicator_impl(PedestrianDirection dir, bool on) {
 static void update_leds_impl(void) {
   uint8_t tx_buffer[3];
 
-  // Convert uint32 to 3 bytes (MSB first for this chain configuration)
-  // U3 is last byte of uint32 (bits 16-23), but first byte sent to chain?
-  // Based on freertos.c "[0] = U3", so txbuffer[0] should be bits 16-23.
+  // Convert uint32 to 3 bytes (MSB first)
 
   tx_buffer[0] = (led_state_buffer >> 16) & 0xFF; // U3
   tx_buffer[1] = (led_state_buffer >> 8) & 0xFF;  // U2
@@ -134,10 +120,8 @@ static void update_leds_impl(void) {
   // Using hspi3 as seen in freertos.c
   HAL_SPI_Transmit(&hspi3, tx_buffer, 3, 10);
 
-  // Latch the data (Pulse STCP)
+  // Latch the data
   HAL_GPIO_WritePin(S595_STCP_GPIO_Port, S595_STCP_Pin, GPIO_PIN_SET);
-  // Short delay might be needed, but HAL_GPIO includes some overhead usually
-  // sufficient. If strict timing needed: for(int i=0;i<10;i++) __NOP();
   HAL_GPIO_WritePin(S595_STCP_GPIO_Port, S595_STCP_Pin, GPIO_PIN_RESET);
 }
 

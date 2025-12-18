@@ -11,14 +11,7 @@
 #include "led_driver.h"
 #include "main.h"
 
-// Task 1 requirements
-// R1.1 Initialization: Ped Red, Car Green
-// R1.2 Button -> Indicator toggle (toggleFreq) until Ped Green
-// R1.3 Car Red after pedestrianDelay
-// R1.4 Ped Green for walkingDelay
-// R1.5 Ped Red if Car Green or Orange
-// R1.6 Car Green -> Orange (orangeDelay) -> Red -> Orange (orangeDelay) ->
-// Green
+// Task 1: Pedestrian Crossing Logic
 
 #define DIRECTION 0
 
@@ -69,7 +62,7 @@ void task1(void) {
   uint32_t last_toggle_time = 0;
   bool indicator_state = false;
 
-  // R1.1 Initialization
+  // Initialization
   set_car_lights(LIGHT_GREEN);
   set_ped_light(PED_LIGHT_RED);
   set_indicator(false);
@@ -103,7 +96,8 @@ void task1(void) {
       break;
 
     case STATE_PRE_TRANSITION:
-      // R1.2 Indicator toggles
+    case STATE_PRE_TRANSITION:
+      // Indicator toggles
       if ((current_time - last_toggle_time) >= g_toggleFreq) {
         indicator_state = !indicator_state;
         set_indicator(indicator_state);
@@ -118,7 +112,8 @@ void task1(void) {
       break;
 
     case STATE_CAR_STOPPING:
-      // R1.6 Car Green -> Orange
+    case STATE_CAR_STOPPING:
+      // Car Green -> Orange
       set_car_lights(LIGHT_YELLOW); // Orange
       set_ped_light(PED_LIGHT_RED);
 
@@ -136,7 +131,8 @@ void task1(void) {
       break;
 
     case STATE_PED_WALK:
-      // R1.5 Car Red, Ped Green
+    case STATE_PED_WALK:
+      // Car Red, Ped Green
       set_car_lights(LIGHT_RED);
       set_ped_light(PED_LIGHT_GREEN);
 
@@ -149,7 +145,8 @@ void task1(void) {
       break;
 
     case STATE_CAR_STARTING:
-      // R1.6 Car Red -> Orange
+    case STATE_CAR_STARTING:
+      // Car Red -> Orange
       set_car_lights(LIGHT_YELLOW); // Orange
       set_ped_light(PED_LIGHT_RED);
 

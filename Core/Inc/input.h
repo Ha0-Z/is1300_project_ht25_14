@@ -20,22 +20,53 @@ typedef struct {
   bool center; // Button Center
 } JoystickState;
 
-// Read the current state of the joystick
+/**
+@brief Reads the current state of the 5-way joystick.
+@param void
+@return JoystickState Struct containing button states.
+ */
 JoystickState input_read_joystick(void);
 
-// Read Pedestrian Light Switch 1 (Active Low)
-// Returns true if pressed
+/**
+@brief Checks if Pedestrian Light Switch 1 is pressed (Active Low).
+@param void
+@return true if pressed, false otherwise.
+ */
 bool input_read_pl1(void);
 
-// Read Pedestrian Light Switch 2 (Active Low)
-// Returns true if pressed
+/**
+@brief Checks if Pedestrian Light Switch 2 is pressed (Active Low).
+@param void
+@return true if pressed, false otherwise.
+ */
 bool input_read_pl2(void);
 
-// Read Car Presence Switches (TL1-TL4)
-// Returns true if active (Active Low assumed)
+/**
+@brief Checks if Car Sensor TL1 is active.
+@param void
+@return true if active, false otherwise.
+ */
 bool input_read_tl1_car(void);
+
+/**
+@brief Checks if Car Sensor TL2 is active.
+@param void
+@return true if active, false otherwise.
+ */
 bool input_read_tl2_car(void);
+
+/**
+@brief Checks if Car Sensor TL3 is active.
+@param void
+@return true if active, false otherwise.
+ */
 bool input_read_tl3_car(void);
+
+/**
+@brief Checks if Car Sensor TL4 is active.
+@param void
+@return true if active, false otherwise.
+ */
 bool input_read_tl4_car(void);
 
 #endif /* INC_INPUT_H_ */

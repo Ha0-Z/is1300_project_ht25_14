@@ -1,3 +1,9 @@
+/*
+ * unit_test.h
+ *
+ *  Created on: Dec 17, 2025
+ *      Author: Hao
+ */
 #ifndef INC_UNIT_TEST_H_
 #define INC_UNIT_TEST_H_
 
@@ -5,16 +11,68 @@
 void Test_program(void);
 
 // Individual Test Functions
+
+/**
+@brief Tests the LED functionality with a rolling pattern.
+@param void
+@return void
+ */
 void test_leds(void);
+
+/**
+@brief Tests the switch inputs mapping to LEDs.
+@param void
+@return void
+ */
 void test_switches(void);
+
+/**
+@brief Low-level test for the LED Driver.
+@param void
+@return void
+ */
 void test_led_driver(void);
+
+/**
+@brief Diagnostic test for inputs PL1 and PL2 mapping to USR_LEDs.
+@param void
+@return void
+ */
 void test_inputs(void);
-void test_screen(void);
-void test_screen_char(void);
+
+/**
+@brief Simple UART transmit test.
+@param void
+@return void
+ */
 void test_uart(void);
+
+/**
+@brief UART echo test to verify receive and transmit.
+@param void
+@return void
+ */
 void test_uart_input(void);
+
+/**
+@brief Unit test for configuration logic validation.
+@param void
+@return void
+ */
 void test_config_logic(void);
+
+/**
+@brief Interactive test for UART configuration updates.
+@param void
+@return void
+ */
 void test_config_uart(void);
+
+/**
+@brief Runs the integrated Task 3 loop (Traffic Control).
+@param void
+@return void
+ */
 void test_task3(void);
 
 #endif /* INC_UNIT_TEST_H_ */
