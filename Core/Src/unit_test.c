@@ -3,6 +3,7 @@
 #include "led_driver.h"
 #include "main.h" // For HAL_Delay
 #include "screen.h"
+#include "task1.h"
 
 // Simple busy wait to avoid interrupt dependencies during unit testing
 // Approx for 80MHz Clock
@@ -10,11 +11,12 @@
 void Test_program(void) {
 
   //	test_leds();
-  //test_led_driver();
-   // test_inputs();
+  // test_led_driver();
+  // test_inputs();
   // test_screen();
   // test_joystick();
-  test_switches();
+  // test_switches();
+  task1();
 }
 
 void test_leds(void) {
@@ -138,7 +140,7 @@ void test_screen(void) {
 }
 
 void test_switches(void) {
-	LED_Driver_Init();
+  LED_Driver_Init();
   while (1) {
     // TL1 Switch -> Controls TL1 Signal
     if (HAL_GPIO_ReadPin(TL1_Car_GPIO_Port, TL1_Car_Pin) == GPIO_PIN_SET) {
