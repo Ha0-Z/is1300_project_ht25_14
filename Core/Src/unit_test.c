@@ -1,4 +1,5 @@
 #include "unit_test.h"
+#include "input.h"
 #include "led_driver.h"
 #include "main.h" // For HAL_Delay
 #include "screen.h"
@@ -10,8 +11,9 @@ void Test_program(void) {
 
   //	test_leds();
   //	test_led_driver();
-  //  test_inputs();
-  test_screen();
+  test_inputs();
+  // test_screen();
+  // test_joystick();
 }
 
 void test_leds(void) {
@@ -50,24 +52,18 @@ void test_inputs(void) {
   LED_Driver.update_leds();
 
   while (1) {
-    // PL1 (Switch 5 & 6) is PA15. Configured as Pull-Up in gpio.c.
-    // Active State is Low (Pressed = 0).
-    if (HAL_GPIO_ReadPin(PL1_Switch_GPIO_Port, PL1_Switch_Pin) ==
-        GPIO_PIN_RESET) {
-      // PL1 Pressed -> Turn ON all LEDs
-      if (LED_Driver.set_raw_bits)
-        LED_Driver.set_raw_bits(0xFFFFFF);
+    // Check PL1 via Input Driver
+    if (input_read_pl1()) {
+      LED_Driver.set_raw_bits(0xFFFFFF); // All On
     }
-    // PL2 (Switch 7 & 8) is PB07. Configured as Pull-Up.
-    else if (HAL_GPIO_ReadPin(PL2_Switch_GPIO_Port, PL2_Switch_Pin) ==
-             GPIO_PIN_RESET) {
-      // PL2 Pressed -> Turn OFF all led
-      LED_Driver.clear_all();
+    // Check PL2 via Input Driver
+    else if (input_read_pl2()) {
+      LED_Driver.set_raw_bits(0x000000); // All Off
+    } else {
+      // Hold state
     }
-
     LED_Driver.update_leds();
-
-    HAL_Delay(50); // simple debounce / poll interval
+    HAL_Delay(50); // Faster polling
   }
 }
 test_led_driver() {

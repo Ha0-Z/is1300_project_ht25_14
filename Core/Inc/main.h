@@ -66,6 +66,8 @@ void Error_Handler(void);
 #define LD2_GPIO_Port GPIOA
 #define TL1_Car_Pin GPIO_PIN_4
 #define TL1_Car_GPIO_Port GPIOC
+#define button3_C_Pin GPIO_PIN_5
+#define button3_C_GPIO_Port GPIOC
 #define Poti_Pin GPIO_PIN_1
 #define Poti_GPIO_Port GPIOB
 #define USR_LED1_Pin GPIO_PIN_2
@@ -78,6 +80,10 @@ void Error_Handler(void);
 #define TL3_Car_GPIO_Port GPIOB
 #define USR_LED2_Pin GPIO_PIN_15
 #define USR_LED2_GPIO_Port GPIOB
+#define button3_B_Pin GPIO_PIN_6
+#define button3_B_GPIO_Port GPIOC
+#define button3_A_Pin GPIO_PIN_8
+#define button3_A_GPIO_Port GPIOC
 #define Disp_Data_Pin GPIO_PIN_9
 #define Disp_Data_GPIO_Port GPIOC
 #define S595_Reset_Pin GPIO_PIN_9
@@ -98,6 +104,10 @@ void Error_Handler(void);
 #define Disp_Reset_GPIO_Port GPIOB
 #define PL2_Switch_Pin GPIO_PIN_7
 #define PL2_Switch_GPIO_Port GPIOB
+#define button3_center_Pin GPIO_PIN_8
+#define button3_center_GPIO_Port GPIOB
+#define button3_D_Pin GPIO_PIN_9
+#define button3_D_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

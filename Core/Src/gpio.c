@@ -76,11 +76,11 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : TL1_Car_Pin */
-  GPIO_InitStruct.Pin = TL1_Car_Pin;
+  /*Configure GPIO pins : TL1_Car_Pin button3_C_Pin button3_B_Pin button3_A_Pin */
+  GPIO_InitStruct.Pin = TL1_Car_Pin|button3_C_Pin|button3_B_Pin|button3_A_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(TL1_Car_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : USR_LED1_Pin S595_STCP_Pin USR_LED2_Pin Disp_Reset_Pin */
   GPIO_InitStruct.Pin = USR_LED1_Pin|S595_STCP_Pin|USR_LED2_Pin|Disp_Reset_Pin;
@@ -89,8 +89,8 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : TL2_Car_Pin TL3_Car_Pin */
-  GPIO_InitStruct.Pin = TL2_Car_Pin|TL3_Car_Pin;
+  /*Configure GPIO pins : TL2_Car_Pin TL3_Car_Pin button3_center_Pin button3_D_Pin */
+  GPIO_InitStruct.Pin = TL2_Car_Pin|TL3_Car_Pin|button3_center_Pin|button3_D_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
