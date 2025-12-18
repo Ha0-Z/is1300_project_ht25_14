@@ -10,7 +10,7 @@
 
 // Helper to read a pin (Active Low: Pressed = 0)
 static bool is_pressed(GPIO_TypeDef *port, uint16_t pin) {
-  return (HAL_GPIO_ReadPin(port, pin) == GPIO_PIN_RESET);
+  return (HAL_GPIO_ReadPin(port, pin) == 0);
 }
 
 JoystickState input_read_joystick(void) {
@@ -46,7 +46,7 @@ bool input_read_pl2(void) {
 // Connected to Ground when pressed. Internal Pull-Ups are enabled in gpio.c.
 // Logic: LOW (GPIO_PIN_RESET) = Pressed (true)
 bool input_read_tl1_car(void) {
-  if (HAL_GPIO_ReadPin(TL1_Car_GPIO_Port, TL1_Car_Pin) == GPIO_PIN_SET) {
+  if (HAL_GPIO_ReadPin(TL1_Car_GPIO_Port, TL1_Car_Pin) == 0) {
     return true;
   } else {
     return false;
@@ -54,7 +54,7 @@ bool input_read_tl1_car(void) {
 }
 
 bool input_read_tl2_car(void) {
-  if (HAL_GPIO_ReadPin(TL2_Car_GPIO_Port, TL2_Car_Pin) == GPIO_PIN_SET) {
+  if (HAL_GPIO_ReadPin(TL2_Car_GPIO_Port, TL2_Car_Pin) == 0) {
     return true;
   } else {
     return false;

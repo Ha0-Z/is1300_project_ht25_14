@@ -18,11 +18,11 @@ void Test_program(void) {
 
   //	test_leds();
   // test_led_driver();
- test_inputs();
+  // test_inputs();
   // test_screen();
   // test_joystick();
   // test_switches();
-  //task1();
+  // task1();
   // task2();
   // test_uart();
   // test_uart_input();
@@ -30,7 +30,7 @@ void Test_program(void) {
   // test_config_logic();
   // test_config_uart();
 
-  //test_task3();
+  test_task3();
 }
 
 void test_leds(void) {
@@ -61,26 +61,32 @@ void test_leds(void) {
   }
 }
 
+// Diagnostic Input Test
+// Maps PL1 -> USR_LED1 (PB2)
+// Maps PL2 -> USR_LED2 (PB15)
 void test_inputs(void) {
   LED_Driver_Init();
 
-  // Safety clear initially
-  LED_Driver.clear_all();
-  LED_Driver.update_leds();
+  // Ensure LEDs are outputs (Initialized in main.c/gpio.c)
 
   while (1) {
-    // Check PL1 via Input Driver
+    // Check PL1
     if (input_read_pl1()) {
-      LED_Driver.set_raw_bits(0x01); // All On
-    }
-    // Check PL2 via Input Driver
-    else if (input_read_pl2()) {
-      LED_Driver.set_raw_bits(0x000000); // All Off
+      HAL_GPIO_WritePin(USR_LED1_GPIO_Port, USR_LED1_Pin, GPIO_PIN_SET); // ON
     } else {
-      // Hold state
+      HAL_GPIO_WritePin(USR_LED1_GPIO_Port, USR_LED1_Pin,
+                        GPIO_PIN_RESET); // OFF
     }
-    LED_Driver.update_leds();
-    HAL_Delay(50); // Faster polling
+
+    // Check PL2
+    if (input_read_pl2()) {
+      HAL_GPIO_WritePin(USR_LED2_GPIO_Port, USR_LED2_Pin, GPIO_PIN_SET); // ON
+    } else {
+      HAL_GPIO_WritePin(USR_LED2_GPIO_Port, USR_LED2_Pin,
+                        GPIO_PIN_RESET); // OFF
+    }
+
+    HAL_Delay(10);
   }
 }
 test_led_driver() {

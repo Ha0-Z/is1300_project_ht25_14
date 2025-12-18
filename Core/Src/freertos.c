@@ -19,10 +19,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
-#include "cmsis_os.h"
-#include "main.h"
 #include "task.h"
-
+#include "main.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -56,30 +55,30 @@ uint8_t varBlink2 = 0;
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
-    .name = "defaultTask",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityNormal,
+  .name = "defaultTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for Blink1Task */
 osThreadId_t Blink1TaskHandle;
 const osThreadAttr_t Blink1Task_attributes = {
-    .name = "Blink1Task",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityLow,
+  .name = "Blink1Task",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for Blink2Task */
 osThreadId_t Blink2TaskHandle;
 const osThreadAttr_t Blink2Task_attributes = {
-    .name = "Blink2Task",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityLow,
+  .name = "Blink2Task",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for TriggTask */
 osThreadId_t TriggTaskHandle;
 const osThreadAttr_t TriggTask_attributes = {
-    .name = "TriggTask",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityLow,
+  .name = "TriggTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -95,10 +94,10 @@ void Trigg(void *argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
- * @brief  FreeRTOS initialization
- * @param  None
- * @retval None
- */
+  * @brief  FreeRTOS initialization
+  * @param  None
+  * @retval None
+  */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 
@@ -122,8 +121,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-  defaultTaskHandle =
-      osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* creation of Blink1Task */
   Blink1TaskHandle = osThreadNew(Blink1, NULL, &Blink1Task_attributes);
@@ -141,6 +139,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
+
 }
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -150,7 +149,8 @@ void MX_FREERTOS_Init(void) {
  * @retval None
  */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument) {
+void StartDefaultTask(void *argument)
+{
   /* USER CODE BEGIN StartDefaultTask */
   LED_Driver_Init();
   uint8_t state = 0;
@@ -166,7 +166,8 @@ void StartDefaultTask(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_Blink1 */
-void Blink1(void *argument) {
+void Blink1(void *argument)
+{
   /* USER CODE BEGIN Blink1 */
   /* Infinite loop */
   for (;;) {
@@ -182,7 +183,8 @@ void Blink1(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_Blink2 */
-void Blink2(void *argument) {
+void Blink2(void *argument)
+{
   /* USER CODE BEGIN Blink2 */
   /* Infinite loop */
   for (;;) {
@@ -201,7 +203,8 @@ void Blink2(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_Trigg */
-void Trigg(void *argument) {
+void Trigg(void *argument)
+{
   /* USER CODE BEGIN Trigg */
   /* Infinite loop */
   for (;;) {
@@ -228,3 +231,4 @@ void wait_cycles(uint32_t n) {
                : [count] "+r"(l));
 }
 /* USER CODE END Application */
+
