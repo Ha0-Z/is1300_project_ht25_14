@@ -5,6 +5,8 @@
 #include "screen.h"
 #include "task1.h"
 #include "task2.h"
+#include "usart.h"
+#include <string.h>
 
 // Simple busy wait to avoid interrupt dependencies during unit testing
 // Approx for 80MHz Clock
@@ -18,7 +20,9 @@ void Test_program(void) {
   // test_joystick();
   // test_switches();
   // task1();
-  task2();
+  // task2();
+  //test_uart();
+  test_uart_input();
 }
 
 void test_leds(void) {
@@ -175,4 +179,31 @@ void test_switches(void) {
     LED_Driver.update_leds();
     HAL_Delay(50);
   }
+}
+
+void test_uart(void) {
+  while (1) {
+    uint8_t Test[] = "Hello World !!!\r\n"; // Data to send
+    HAL_UART_Transmit(&huart2, Test, sizeof(Test),
+                      10); // Sending in normal mode
+    HAL_Delay(1000);
+  }
+}
+
+void test_uart_input(void) {
+	uint8_t RxData; // Variable to store the incoming byte [cite: 528]
+	uint8_t Test[] = "\r\n"; //Data to send
+
+
+	while (1)
+	{
+	  // 1. Wait for 1 byte to arrive (Timeout set to 5 seconds) [cite: 536]
+	  if (HAL_UART_Receive(&huart2, &RxData, 1, 5000) == HAL_OK)
+	  {
+	    // 2. Echo it back: Send the received byte back to the terminal [cite: 537]
+	    HAL_UART_Transmit(&huart2, &RxData, 1, 10);
+		HAL_UART_Transmit(&huart2,Test,sizeof(Test),10);// Sending in normal mode
+
+	  }
+	}
 }
