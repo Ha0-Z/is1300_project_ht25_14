@@ -78,7 +78,6 @@ void task2(void) {
       }
 
       bool switch_to_horizontal = false;
-      bool switch_to_horizontal = false;
       // Ghost Town: Switch if BOTH empty & time > greenDelay
       if (!v_busy && !h_busy) {
         if ((current_time - state_start_time) >= g_greenDelay) {
@@ -129,7 +128,6 @@ void task2(void) {
         waiting = false;
       }
 
-      bool switch_to_vertical = false;
       bool switch_to_vertical = false;
       // Ghost Town
       if (!h_busy && !v_busy) {

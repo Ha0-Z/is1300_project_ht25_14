@@ -23,7 +23,7 @@ void Test_program(void) {
   // test_joystick();
   // test_switches();
   // test_uart();
-  // test_uart_input();
+  test_uart_input();
   // test_config_logic();
 
   // task1();

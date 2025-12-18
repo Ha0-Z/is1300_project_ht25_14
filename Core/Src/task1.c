@@ -96,7 +96,6 @@ void task1(void) {
       break;
 
     case STATE_PRE_TRANSITION:
-    case STATE_PRE_TRANSITION:
       // Indicator toggles
       if ((current_time - last_toggle_time) >= g_toggleFreq) {
         indicator_state = !indicator_state;
@@ -111,7 +110,6 @@ void task1(void) {
       }
       break;
 
-    case STATE_CAR_STOPPING:
     case STATE_CAR_STOPPING:
       // Car Green -> Orange
       set_car_lights(LIGHT_YELLOW); // Orange
@@ -131,7 +129,6 @@ void task1(void) {
       break;
 
     case STATE_PED_WALK:
-    case STATE_PED_WALK:
       // Car Red, Ped Green
       set_car_lights(LIGHT_RED);
       set_ped_light(PED_LIGHT_GREEN);
@@ -144,7 +141,6 @@ void task1(void) {
       }
       break;
 
-    case STATE_CAR_STARTING:
     case STATE_CAR_STARTING:
       // Car Red -> Orange
       set_car_lights(LIGHT_YELLOW); // Orange
