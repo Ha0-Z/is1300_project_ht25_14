@@ -4,6 +4,7 @@
 #include "main.h" // For HAL_Delay
 #include "screen.h"
 #include "task1.h"
+#include "task2.h"
 
 // Simple busy wait to avoid interrupt dependencies during unit testing
 // Approx for 80MHz Clock
@@ -16,7 +17,8 @@ void Test_program(void) {
   // test_screen();
   // test_joystick();
   // test_switches();
-  task1();
+  // task1();
+  task2();
 }
 
 void test_leds(void) {
