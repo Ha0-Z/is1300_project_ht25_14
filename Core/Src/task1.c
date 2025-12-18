@@ -6,6 +6,7 @@
  */
 
 #include "task1.h"
+#include "config.h"
 #include "input.h"
 #include "led_driver.h"
 #include "main.h"
@@ -18,12 +19,6 @@
 // R1.5 Ped Red if Car Green or Orange
 // R1.6 Car Green -> Orange (orangeDelay) -> Red -> Orange (orangeDelay) ->
 // Green
-
-// Timings (in ms)
-#define TOGGLE_FREQ 500
-#define PEDESTRIAN_DELAY 4000
-#define ORANGE_DELAY 2000
-#define WALKING_DELAY 5000
 
 #define DIRECTION 0
 
@@ -109,14 +104,14 @@ void task1(void) {
 
     case STATE_PRE_TRANSITION:
       // R1.2 Indicator toggles
-      if ((current_time - last_toggle_time) >= TOGGLE_FREQ) {
+      if ((current_time - last_toggle_time) >= g_toggleFreq) {
         indicator_state = !indicator_state;
         set_indicator(indicator_state);
         last_toggle_time = current_time;
       }
 
       if ((current_time - state_start_time) >=
-          (PEDESTRIAN_DELAY - ORANGE_DELAY)) {
+          (g_pedestrianDelay - g_orangeDelay)) {
         state = STATE_CAR_STOPPING;
         state_start_time = current_time;
       }
@@ -128,13 +123,13 @@ void task1(void) {
       set_ped_light(PED_LIGHT_RED);
 
       // Toggle continues
-      if ((current_time - last_toggle_time) >= TOGGLE_FREQ) {
+      if ((current_time - last_toggle_time) >= g_toggleFreq) {
         indicator_state = !indicator_state;
         set_indicator(indicator_state);
         last_toggle_time = current_time;
       }
 
-      if ((current_time - state_start_time) >= ORANGE_DELAY) {
+      if ((current_time - state_start_time) >= g_orangeDelay) {
         state = STATE_PED_WALK;
         state_start_time = current_time;
       }
@@ -147,7 +142,7 @@ void task1(void) {
 
       set_indicator(false);
 
-      if ((current_time - state_start_time) >= WALKING_DELAY) {
+      if ((current_time - state_start_time) >= g_walkingDelay) {
         state = STATE_CAR_STARTING;
         state_start_time = current_time;
       }
@@ -158,7 +153,7 @@ void task1(void) {
       set_car_lights(LIGHT_YELLOW); // Orange
       set_ped_light(PED_LIGHT_RED);
 
-      if ((current_time - state_start_time) >= ORANGE_DELAY) {
+      if ((current_time - state_start_time) >= g_orangeDelay) {
         state = STATE_IDLE; // Loop back
                             // Car will turn Green in IDLE
       }

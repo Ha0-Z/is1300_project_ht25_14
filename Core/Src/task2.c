@@ -6,6 +6,7 @@
  */
 
 #include "task2.h"
+#include "config.h"
 #include "input.h"
 #include "led_driver.h"
 #include "main.h"
@@ -19,11 +20,6 @@
 // R2.6 Forced Yield: Switch if Active & Waiter > redDelayMax
 // R2.7 Immediate Yield: Switch if Empty & Waiter
 // R2.8 Init: Vert Green, Horiz Red
-
-// Timings (in ms)
-#define GREEN_DELAY 10000
-#define ORANGE_DELAY 500
-#define RED_DELAY_MAX 2000
 
 typedef enum {
   STATE_VERTICAL_PASS,
@@ -90,10 +86,9 @@ void task2(void) {
       }
 
       bool switch_to_horizontal = false;
-
       // R2.4 Ghost Town: Switch if BOTH empty & time > greenDelay
       if (!v_busy && !h_busy) {
-        if ((current_time - state_start_time) >= GREEN_DELAY) {
+        if ((current_time - state_start_time) >= g_greenDelay) {
           switch_to_horizontal = true;
         }
       }
@@ -103,7 +98,7 @@ void task2(void) {
       }
       // R2.6 Forced Yield: Vert Busy & Horiz Waiting longer than Max
       else if (v_busy && h_busy) {
-        if ((current_time - waiter_arrival_time) >= RED_DELAY_MAX) {
+        if ((current_time - waiter_arrival_time) >= g_redDelayMax) {
           switch_to_horizontal = true;
         }
       }
@@ -119,7 +114,7 @@ void task2(void) {
       set_vertical_lights(LIGHT_YELLOW);   // Orange
       set_horizontal_lights(LIGHT_YELLOW); // Orange (PlantUML says both Orange)
 
-      if ((current_time - state_start_time) >= ORANGE_DELAY) {
+      if ((current_time - state_start_time) >= g_orangeDelay) {
         state = STATE_HORIZONTAL_PASS;
         state_start_time = current_time;
         waiting = false; // Reset waiter logic for new cycle
@@ -142,10 +137,9 @@ void task2(void) {
       }
 
       bool switch_to_vertical = false;
-
       // R2.4 Ghost Town
       if (!h_busy && !v_busy) {
-        if ((current_time - state_start_time) >= GREEN_DELAY) {
+        if ((current_time - state_start_time) >= g_greenDelay) {
           switch_to_vertical = true;
         }
       }
@@ -155,7 +149,7 @@ void task2(void) {
       }
       // R2.6 Forced Yield
       else if (h_busy && v_busy) {
-        if ((current_time - waiter_arrival_time) >= RED_DELAY_MAX) {
+        if ((current_time - waiter_arrival_time) >= g_redDelayMax) {
           switch_to_vertical = true;
         }
       }
@@ -171,7 +165,7 @@ void task2(void) {
       set_vertical_lights(LIGHT_YELLOW);   // Orange
       set_horizontal_lights(LIGHT_YELLOW); // Orange
 
-      if ((current_time - state_start_time) >= ORANGE_DELAY) {
+      if ((current_time - state_start_time) >= g_orangeDelay) {
         state = STATE_VERTICAL_PASS;
         state_start_time = current_time;
         waiting = false;

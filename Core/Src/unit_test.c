@@ -1,11 +1,12 @@
 #include "unit_test.h"
+#include "config.h"
 #include "input.h"
 #include "led_driver.h"
-#include "main.h" // For HAL_Delay
-#include "screen.h"
 #include "task1.h"
 #include "task2.h"
+#include "task_config.h"
 #include "usart.h"
+#include <stdio.h>
 #include <string.h>
 
 // Simple busy wait to avoid interrupt dependencies during unit testing
@@ -21,8 +22,10 @@ void Test_program(void) {
   // test_switches();
   // task1();
   // task2();
-  //test_uart();
-  test_uart_input();
+  // test_uart();
+  // test_uart_input();
+  test_config_logic();
+  test_config_uart();
 }
 
 void test_leds(void) {
@@ -191,19 +194,94 @@ void test_uart(void) {
 }
 
 void test_uart_input(void) {
-	uint8_t RxData; // Variable to store the incoming byte [cite: 528]
-	uint8_t Test[] = "\r\n"; //Data to send
+  uint8_t RxData;          // Variable to store the incoming byte [cite: 528]
+  uint8_t Test[] = "\r\n"; // Data to send
 
+  while (1) {
+    // 1. Wait for 1 byte to arrive (Timeout set to 5 seconds) [cite: 536]
+    if (HAL_UART_Receive(&huart2, &RxData, 1, 5000) == HAL_OK) {
+      // 2. Echo it back: Send the received byte back to the terminal [cite:
+      // 537]
+      HAL_UART_Transmit(&huart2, &RxData, 1, 10);
+      HAL_UART_Transmit(&huart2, Test, sizeof(Test),
+                        10); // Sending in normal mode
+    }
+  }
+}
 
-	while (1)
-	{
-	  // 1. Wait for 1 byte to arrive (Timeout set to 5 seconds) [cite: 536]
-	  if (HAL_UART_Receive(&huart2, &RxData, 1, 5000) == HAL_OK)
-	  {
-	    // 2. Echo it back: Send the received byte back to the terminal [cite: 537]
-	    HAL_UART_Transmit(&huart2, &RxData, 1, 10);
-		HAL_UART_Transmit(&huart2,Test,sizeof(Test),10);// Sending in normal mode
+void test_config_logic(void) {
+  char msg[128];
 
-	  }
-	}
+  // Reset defaults
+  config_init();
+
+  // 1. Valid Update: Toggle Freq
+  // Set to 1000ms
+  if (config_set_value(CONFIG_ID_TOGGLE_FREQ, 1000) && g_toggleFreq == 1000) {
+    snprintf(msg, sizeof(msg), "[PASS] Valid Toggle Freq set to 1000\r\n");
+  } else {
+    snprintf(msg, sizeof(msg), "[FAIL] Valid Toggle Freq failed\r\n");
+  }
+  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+
+  // 2. Invalid Update: Pedestrian Delay too short (must be > Orange Delay 2000)
+  // Try set to 1500 (Fail expected)
+  if (!config_set_value(CONFIG_ID_PEDESTRIAN_DELAY, 1500)) {
+    snprintf(msg, sizeof(msg),
+             "[PASS] Invalid Ped Delay rejected (Correct)\r\n");
+  } else {
+    snprintf(msg, sizeof(msg),
+             "[FAIL] Invalid Ped Delay 1500 was accepted!\r\n");
+  }
+  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+
+  // 3. Valid Update: Pedestrian Delay
+  // Set to 5000 (Pass expected)
+  if (config_set_value(CONFIG_ID_PEDESTRIAN_DELAY, 5000) &&
+      g_pedestrianDelay == 5000) {
+    snprintf(msg, sizeof(msg), "[PASS] Valid Ped Delay set to 5000\r\n");
+  } else {
+    snprintf(msg, sizeof(msg), "[FAIL] Valid Ped Delay failed\r\n");
+  }
+  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+
+  // 4. Invalid Update: Orange Delay too long
+  // Try set Orange to 6000 (Current Ped is 5000, so fail expected)
+  if (!config_set_value(CONFIG_ID_ORANGE_DELAY, 6000)) {
+    snprintf(msg, sizeof(msg),
+             "[PASS] Invalid Orange Delay rejected (Correct)\r\n");
+  } else {
+    snprintf(msg, sizeof(msg),
+             "[FAIL] Invalid Orange Delay 6000 was accepted!\r\n");
+  }
+  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+}
+
+void test_config_uart(void) {
+  char msg[128];
+  uint32_t last_print = 0;
+
+  // Print Instructions
+  snprintf(msg, sizeof(msg),
+           "\r\n--- UART Config Test ---\r\nSend 4-byte packets to change "
+           "values.\r\n");
+  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+
+  while (1) {
+    // Poll for config commands
+    task_config_poller();
+
+    // Print current values every 2 seconds
+    if ((HAL_GetTick() - last_print) > 2000) {
+      snprintf(msg, sizeof(msg),
+               "TogFreq: %lu, PedDel: %lu, WalkDel: %lu, OrDel: %lu\r\n",
+               g_toggleFreq, g_pedestrianDelay, g_walkingDelay, g_orangeDelay);
+      HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+      last_print = HAL_GetTick();
+    }
+
+    // Small delay to prevent tight loop starvation if we were using RTOS (not
+    // strictly needed here but good practice)
+    HAL_Delay(10);
+  }
 }
