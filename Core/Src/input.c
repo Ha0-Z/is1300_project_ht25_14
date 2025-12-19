@@ -52,7 +52,7 @@ bool input_read_tl2_car(void) {
 }
 
 bool input_read_tl3_car(void) {
-  if (HAL_GPIO_ReadPin(TL3_Car_GPIO_Port, TL3_Car_Pin) == GPIO_PIN_SET) {
+  if (HAL_GPIO_ReadPin(TL3_Car_GPIO_Port, TL3_Car_Pin) == 0) {
     return true;
   } else {
     return false;
@@ -61,7 +61,7 @@ bool input_read_tl3_car(void) {
 
 bool input_read_tl4_car(void) {
   // TL4 is on PA10
-  if (HAL_GPIO_ReadPin(TL4_Car_GPIO_Port, TL4_Car_Pin) == GPIO_PIN_SET) {
+  if (HAL_GPIO_ReadPin(TL4_Car_GPIO_Port, TL4_Car_Pin) == 0) {
     return true;
   } else {
     return false;
