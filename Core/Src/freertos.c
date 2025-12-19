@@ -164,14 +164,12 @@ void StartDefaultTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask3 */
+extern void StartTask3_Impl(void *argument);
+
 void StartTask3(void *argument)
 {
   /* USER CODE BEGIN StartTask3 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
+  StartTask3_Impl(argument);
   /* USER CODE END StartTask3 */
 }
 
@@ -182,14 +180,12 @@ void StartTask3(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask5 */
+extern void StartTask5_Impl(void *argument);
+
 void StartTask5(void *argument)
 {
   /* USER CODE BEGIN StartTask5 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
+  StartTask5_Impl(argument);
   /* USER CODE END StartTask5 */
 }
 

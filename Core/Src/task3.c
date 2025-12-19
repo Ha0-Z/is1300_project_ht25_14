@@ -10,12 +10,28 @@
 #include "input.h"      // For button reading
 // Assuming your new signal functions are declared here:
 #include "led_driver.h"
+#include "cmsis_os.h"
+#include "config.h"
+
+#define TIME_CONSTANT 10
+
 
 // --- Shared Data (Input Interface) ---
 static bool input_v_ped_req = false;   // Latched: True until serviced
 static bool input_h_ped_req = false;   // Latched: True until serviced
 static bool input_v_car_busy = false;  // Instantaneous status
 static bool input_h_car_busy = false;  // Instantaneous status
+
+// --- Interrupt Callback ---
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    if (GPIO_Pin == PL1_Switch_Pin) {
+        input_v_ped_req = true;
+        set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, true);
+    } else if (GPIO_Pin == PL2_Switch_Pin) {
+        input_h_ped_req = true;
+        set_lamp_pedestrian(TRAFFIC_FLOW_HORIZONTAL, true);
+    }
+}
 
 // --- Internal Logic Variables ---
 static uint32_t v_arrival_time = 0;
@@ -100,7 +116,7 @@ static void service_pedestrian_sequence(bool is_vertical_ped) {
     set_signal_pedestrian(flow, PED_LIGHT_GREEN);
     
     // 3. Blocking Delay (Freeze system for safety)
-    HAL_Delay(WALKING_DELAY_MS);
+    osDelay(WALKING_DELAY_MS);
 
     // 4. Turn off Walk Signal (Back to Red)
     set_signal_pedestrian(flow, PED_LIGHT_RED);
@@ -117,7 +133,17 @@ static void service_pedestrian_sequence(bool is_vertical_ped) {
 // =========================================================
 // 3. MAIN TASK (Run 1x per cycle)
 // =========================================================
-void task3(void) {
+// =========================================================
+// 3. MAIN TASK (Periodic)
+// =========================================================
+void StartTask3_Impl(void *argument) {
+  
+  // Initialization
+  current_state = STATE_INIT;
+  
+  for(;;) {
+    collectInput();
+
     uint32_t current_time = HAL_GetTick();
     uint32_t time_in_state = current_time - state_entry_time;
 
@@ -126,6 +152,7 @@ void task3(void) {
     uint32_t v_wait_time = (input_v_car_busy) ? (current_time - v_arrival_time) : 0;
     
     // Flag for "Ghost Town" or "Immediate Yield" logic
+    bool switch_direction = false;
 
     switch (current_state) {
     
@@ -162,9 +189,6 @@ void task3(void) {
         }
 
         // 2. Check Switching Conditions
-        bool switch_direction = false;
-
-
 
         // 2.4
         if (time_in_state > MIN_GREEN_MS) {
@@ -191,7 +215,7 @@ void task3(void) {
 
         if (input_v_ped_req) {
 				if (input_v_car_busy) {
-					// If the opposite way is busy wait to max red.
+					// If the opposite way is busywait to max red.
 					if(v_wait_time > MAX_RED_WAIT_MS) {
 						switch_direction = true;
 					}
@@ -201,18 +225,6 @@ void task3(void) {
 				}
 			}
 
-
-
-//        // Condition A: Gap Logic (Vertical Empty + Others Waiting)
-//        if (!input_v_car_busy && (input_h_car_busy || time_in_state > MIN_GREEN_MS)) {
-//            switch_direction = true;
-//            // Optional: If V is empty and H is waiting, we could set skip_yellow = true;
-//        }
-//        // Condition B: Fairness / Max Wait
-//        else if (h_wait_time > MAX_RED_WAIT_MS) {
-//            switch_direction = true;
-//        }
-//
         if (switch_direction) {
             current_state = STATE_VERTICAL_STOP;
             state_entry_time = current_time;
@@ -229,7 +241,7 @@ void task3(void) {
         // 2.7 Skip the delay
         if (!skip_yellow) {
         	// 2.3
-            HAL_Delay(ORANGE_DELAY_MS);
+            osDelay(ORANGE_DELAY_MS);
         }
         skip_yellow = false;
 
@@ -260,8 +272,6 @@ void task3(void) {
         	} else {
         		switch_direction = true;
         	}
-
-
         }
 
         // 2.6
@@ -290,15 +300,6 @@ void task3(void) {
         	}
         }
 
-//        // Condition A: Gap Logic
-//        if (!input_h_car_busy && (input_v_car_busy || time_in_state > MIN_GREEN_MS)) {
-//            switch_h = true;
-//        }
-//        // Condition B: Fairness
-//        else if (v_wait_time > MAX_RED_WAIT_MS) {
-//            switch_h = true;
-//        }
-//
         if (switch_direction) {
             current_state = STATE_HORIZONTAL_STOP;
             state_entry_time = current_time;
@@ -313,7 +314,7 @@ void task3(void) {
         // Vertical stays Red automatically
 
         if (!skip_yellow) {
-            HAL_Delay(ORANGE_DELAY_MS);
+            osDelay(ORANGE_DELAY_MS);
         }
         skip_yellow = false;
 
@@ -321,4 +322,7 @@ void task3(void) {
         state_entry_time = HAL_GetTick();
         break;
     }
+    
+    osDelay(TIME_CONSTANT);
+  }
 }
