@@ -68,4 +68,11 @@ void test_task3(void);
  */
 void test_task5(void);
 
+/**
+ * @brief Test for the direct LED control functions.
+ * @param None
+ * @return None
+ */
+void test_led_functions(void);
+
 #endif /* INC_UNIT_TEST_H_ */

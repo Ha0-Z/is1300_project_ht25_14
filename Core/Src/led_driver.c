@@ -153,3 +153,33 @@ void LED_Driver_Init(void) {
   // Clear initial state
   clear_all_impl();
 }
+
+// Direct Control Wrappers
+void set_signal(TrafficFlowDirection dir, TrafficLightState color) {
+  if (dir == TRAFFIC_FLOW_VERTICAL) {
+      LED_Driver.set_traffic_signal(MODE_TL1, color);
+      LED_Driver.set_traffic_signal(MODE_TL3, color);
+  } else {
+      LED_Driver.set_traffic_signal(MODE_TL2, color);
+      LED_Driver.set_traffic_signal(MODE_TL4, color);
+  }
+  LED_Driver.update_leds();
+}
+
+void set_signal_pedestrian(TrafficFlowDirection dir, PedestrianLightState color) {
+  if (dir == TRAFFIC_FLOW_VERTICAL) {
+      LED_Driver.set_pedestrian_signal(MODE_PL1, color);
+  } else {
+      LED_Driver.set_pedestrian_signal(MODE_PL2, color);
+  }
+  LED_Driver.update_leds();
+}
+
+void set_lamp_pedestrian(TrafficFlowDirection dir, bool on) {
+  if (dir == TRAFFIC_FLOW_VERTICAL) {
+      LED_Driver.set_pedestrian_indicator(MODE_PL1, on);
+  } else {
+      LED_Driver.set_pedestrian_indicator(MODE_PL2, on);
+  }
+  LED_Driver.update_leds();
+}

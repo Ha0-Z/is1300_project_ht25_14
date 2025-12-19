@@ -85,6 +85,17 @@ typedef struct {
 // Access the global driver instance
 extern const TrafficLightDriver LED_Driver;
 
+// High-Level Direction Enum
+typedef enum {
+    TRAFFIC_FLOW_VERTICAL,
+    TRAFFIC_FLOW_HORIZONTAL
+} TrafficFlowDirection;
+
+// Direct Control Wrappers
+void set_signal(TrafficFlowDirection dir, TrafficLightState color);
+void set_signal_pedestrian(TrafficFlowDirection dir, PedestrianLightState color);
+void set_lamp_pedestrian(TrafficFlowDirection dir, bool on);
+
 /**
 @brief Initializes the LED Driver and Shift Registers.
 @param void

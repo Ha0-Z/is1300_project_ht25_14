@@ -19,6 +19,7 @@
 void Test_program(void) {
   // test_leds();
   // test_led_driver();
+   test_led_functions();
   // test_inputs();
   // test_joystick();
   // test_switches();
@@ -28,7 +29,7 @@ void Test_program(void) {
   // task1();
   // task2();
   // test_task3();
-   test_task5();
+  // test_task5();
 }
 
 void test_leds(void) {
@@ -263,11 +264,82 @@ void test_task5(void) {
     	task5_poller();
     }
 
+
     snprintf(msg, sizeof(msg),
                    "TogFreq: %lu, PedDel: %lu, WalkDel: %lu, OrDel: %lu\r\n",
                    g_toggleFreq, g_pedestrianDelay, g_walkingDelay, g_orangeDelay);
           HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
           last_print = HAL_GetTick();
     HAL_Delay(10);
+  }
+}
+
+void test_led_functions(void) {
+  LED_Driver_Init();
+  char msg[64];
+  
+  while (1) {
+    // 1. Test Traffic Signals
+    snprintf(msg, sizeof(msg), "Testing Traffic Signals...\r\n");
+    HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+    
+    // Set all to Red (Check Vertical then Horizontal)
+    set_signal(TRAFFIC_FLOW_VERTICAL, LIGHT_RED);
+    set_signal(TRAFFIC_FLOW_HORIZONTAL, LIGHT_RED);
+    HAL_Delay(1000);
+
+    // Set Vertical Green
+    set_signal(TRAFFIC_FLOW_VERTICAL, LIGHT_GREEN);
+    HAL_Delay(1000);
+
+    // Set Vertical Yellow
+    set_signal(TRAFFIC_FLOW_VERTICAL, LIGHT_YELLOW);
+    HAL_Delay(1000);
+    
+    // Reset Vertical to Red
+    set_signal(TRAFFIC_FLOW_VERTICAL, LIGHT_RED);
+    HAL_Delay(1000);
+    
+    // Set Horizontal Green
+    set_signal(TRAFFIC_FLOW_HORIZONTAL, LIGHT_GREEN);
+    HAL_Delay(1000);
+
+    // Set Horizontal Yellow
+    set_signal(TRAFFIC_FLOW_HORIZONTAL, LIGHT_YELLOW);
+    HAL_Delay(1000);
+    
+    // Reset Horizontal to Red
+    set_signal(TRAFFIC_FLOW_HORIZONTAL, LIGHT_RED);
+    HAL_Delay(1000);
+
+
+    // 2. Test Pedestrian Signals
+    snprintf(msg, sizeof(msg), "Testing Pedetrian Signals...\r\n");
+    HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+
+    // Red
+    set_signal_pedestrian(TRAFFIC_FLOW_VERTICAL, PED_LIGHT_RED);
+    set_signal_pedestrian(TRAFFIC_FLOW_HORIZONTAL, PED_LIGHT_RED);
+    HAL_Delay(1000);
+
+    // Green Vertical
+    set_signal_pedestrian(TRAFFIC_FLOW_VERTICAL, PED_LIGHT_GREEN);
+    HAL_Delay(1000);
+    
+    // Green Horizontal
+    set_signal_pedestrian(TRAFFIC_FLOW_HORIZONTAL, PED_LIGHT_GREEN);
+    HAL_Delay(1000);
+
+    // 3. Test Pedestrian Indicators
+    snprintf(msg, sizeof(msg), "Testing Indicators...\r\n");
+    HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+
+    set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, true);
+    set_lamp_pedestrian(TRAFFIC_FLOW_HORIZONTAL, true);
+    HAL_Delay(1000);
+
+    set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, false);
+    set_lamp_pedestrian(TRAFFIC_FLOW_HORIZONTAL, false);
+    HAL_Delay(1000);
   }
 }
