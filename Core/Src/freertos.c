@@ -11,13 +11,18 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "main.h"
 #include "cmsis_os.h"
+#include <stdbool.h> 
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led_driver.h"
-#include "task3.h" // For task3_input_update
+#include "task3.h" // For task3_input_update, status
 #include "task5.h" // For task5_poller
+#include "config.h" 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -77,6 +82,14 @@ const osThreadAttr_t CommandTask_attributes = {
   .priority = (osPriority_t) osPriorityLow,
 };
 
+/* Definitions for PedIndicatorTask */
+osThreadId_t PedIndicatorTaskHandle;
+const osThreadAttr_t PedIndicatorTask_attributes = {
+  .name = "PedIndicatorTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+
 /* Definitions for TrafficTask */
 osThreadId_t TrafficTaskHandle;
 const osThreadAttr_t TrafficTask_attributes = {
@@ -105,6 +118,7 @@ void Trigg(void *argument);
 void InputTimerCallback(void *argument);
 void CommandTask(void *argument);
 void TrafficTask(void *argument);
+void PedIndicatorTask(void *argument);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -141,6 +155,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of TrafficTask */
   TrafficTaskHandle = osThreadNew(TrafficTask, NULL, &TrafficTask_attributes);
+
+  /* creation of PedIndicatorTask */
+  PedIndicatorTaskHandle = osThreadNew(PedIndicatorTask, NULL, &PedIndicatorTask_attributes);
 
   /* Create InputTimer (10ms periodic) */
   inputTimerHandle = osTimerNew(InputTimerCallback, osTimerPeriodic, NULL, &inputTimer_attributes);
@@ -293,4 +310,38 @@ void TrafficTask(void *argument)
       osDelay(10); 
   }
   /* USER CODE END TrafficTask */
+}
+
+/* USER CODE BEGIN Header_PedIndicatorTask */
+/**
+* @brief Function implementing the PedIndicatorTask thread.
+* Blinks the Pedestrian Wait Lamps if they are waiting.
+*/
+/* USER CODE END Header_PedIndicatorTask */
+void PedIndicatorTask(void *argument)
+{
+  /* USER CODE BEGIN PedIndicatorTask */
+  bool toggle = false;
+  for(;;)
+  {
+      toggle = !toggle;
+
+      // Vertical Pedestrian
+      if (task3_is_vertical_ped_waiting()) {
+          set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, toggle);
+      } else {
+          // Ensure off if not waiting
+           set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, false);
+      }
+
+      // Horizontal Pedestrian
+      if (task3_is_horizontal_ped_waiting()) {
+          set_lamp_pedestrian(TRAFFIC_FLOW_HORIZONTAL, toggle);
+      } else {
+           set_lamp_pedestrian(TRAFFIC_FLOW_HORIZONTAL, false);
+      }
+
+      osDelay(g_toggleFreq);
+  }
+  /* USER CODE END PedIndicatorTask */
 }

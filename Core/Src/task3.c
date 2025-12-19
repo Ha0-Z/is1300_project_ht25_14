@@ -6,15 +6,19 @@
  */
 
 #include "task3.h"
+#include "task3.h"
 #include "main.h"       // For HAL_Delay, HAL_GetTick
 #include "cmsis_os.h"   // For osDelay
 #include "input.h"      // For button reading
+#include "config.h"     // For global configuration variables
 // Assuming your new signal functions are declared here:
 #include "led_driver.h"
 
 // --- Shared Data (Input Interface) ---
 static bool input_v_ped_req = false;   // Latched: True until serviced
 static bool input_h_ped_req = false;   // Latched: True until serviced
+static uint32_t input_v_ped_req_time = 0; // Timestamp of request
+static uint32_t input_h_ped_req_time = 0; // Timestamp of request
 static bool input_v_car_busy = false;  // Instantaneous status
 static bool input_h_car_busy = false;  // Instantaneous status
 
@@ -41,11 +45,8 @@ typedef enum {
 static SystemState current_state = STATE_INIT;
 static uint32_t state_entry_time = 0;
 
-// Configuration Constants
-#define ORANGE_DELAY_MS   500
-#define WALKING_DELAY_MS  3000
-#define MIN_GREEN_MS      10000
-#define MAX_RED_WAIT_MS   5000
+// Configuration Variables are now in config.c/h
+// (g_toggleFreq, g_pedestrianDelay, g_walkingDelay, g_orangeDelay, g_greenDelay, g_redDelayMax)
 
 
 // =========================================================
@@ -54,14 +55,18 @@ static uint32_t state_entry_time = 0;
 void task3_input_update(void) {
     // A. Latch Pedestrian Buttons
     if (input_read_pl1()) {
-        input_v_ped_req = true;
-        // Optional: Turn on "Wait" indicator lamp immediately
-        set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, true); 
+        if (!input_v_ped_req) {
+            input_v_ped_req = true;
+            input_v_ped_req_time = HAL_GetTick(); // Capture time
+        }
+        // Lamp handling moves to PedIndicatorTask
     }
     if (input_read_pl2()) {
-        input_h_ped_req = true;
-        // Optional: Turn on "Wait" indicator lamp immediately
-        set_lamp_pedestrian(TRAFFIC_FLOW_HORIZONTAL, true);
+        if (!input_h_ped_req) {
+            input_h_ped_req = true;
+             input_h_ped_req_time = HAL_GetTick(); // Capture time
+        }
+        // Lamp handling moves to PedIndicatorTask
     }
 
     // B. Update Car Sensors
@@ -101,7 +106,7 @@ static void service_pedestrian_sequence(bool is_vertical_ped) {
     set_signal_pedestrian(flow, PED_LIGHT_GREEN);
     
     // 3. Blocking Delay (Freeze system for safety)
-    osDelay(WALKING_DELAY_MS);
+    osDelay(g_walkingDelay);
 
     // 4. Turn off Walk Signal (Back to Red)
     set_signal_pedestrian(flow, PED_LIGHT_RED);
@@ -168,7 +173,7 @@ void task3(void) {
 
 
         // 2.4
-        if (time_in_state > MIN_GREEN_MS) {
+        if (time_in_state > g_greenDelay) { // Use Config Variable
         	if(input_v_car_busy && !input_h_car_busy){
         		// 2.5
         		// Do nothing
@@ -179,7 +184,7 @@ void task3(void) {
 
         // 2.6
         if (input_v_car_busy && input_h_car_busy) {
-        	if(h_wait_time > MAX_RED_WAIT_MS) {
+        	if(h_wait_time > g_redDelayMax) { // Use Config Variable
         		switch_direction = true;
         	}
         }
@@ -191,9 +196,13 @@ void task3(void) {
         }
 
         if (input_v_ped_req) {
-				if (input_v_car_busy) {
+                 // Check deadline (R1.3)
+                 uint32_t ped_wait_time = current_time - input_v_ped_req_time;
+                 if (ped_wait_time > g_pedestrianDelay) {
+                      switch_direction = true;
+                 } else if (input_v_car_busy) {
 					// If the opposite way is busy wait to max red.
-					if(v_wait_time > MAX_RED_WAIT_MS) {
+					if(v_wait_time > g_redDelayMax) {
 						switch_direction = true;
 					}
 				} else {
@@ -230,7 +239,7 @@ void task3(void) {
         // 2.7 Skip the delay
         if (!skip_yellow) {
         	// 2.3
-            osDelay(ORANGE_DELAY_MS);
+            osDelay(g_orangeDelay); // Use Config
         }
         skip_yellow = false;
 
@@ -254,7 +263,7 @@ void task3(void) {
 
 
         // 2.4
-        if (time_in_state > MIN_GREEN_MS) {
+        if (time_in_state > g_greenDelay) {
         	if(input_h_car_busy && !input_v_car_busy){
         		// 2.5
         		// Do nothing
@@ -267,7 +276,7 @@ void task3(void) {
 
         // 2.6
         if (input_h_car_busy && input_v_car_busy) {
-        	if(v_wait_time > MAX_RED_WAIT_MS) {
+        	if(v_wait_time > g_redDelayMax) {
         		switch_direction = true;
         	}
         }
@@ -282,7 +291,7 @@ void task3(void) {
         if (input_h_ped_req) {
         	if (input_h_car_busy) {
         		// If the opposite way is busy wait to max red.
-        		if(h_wait_time > MAX_RED_WAIT_MS) {
+        		if(h_wait_time > g_redDelayMax) {
 					switch_direction = true;
 				}
         	} else {
@@ -314,7 +323,7 @@ void task3(void) {
         // Vertical stays Red automatically
 
         if (!skip_yellow) {
-            osDelay(ORANGE_DELAY_MS);
+            osDelay(g_orangeDelay);
         }
         skip_yellow = false;
 
@@ -322,4 +331,12 @@ void task3(void) {
         state_entry_time = HAL_GetTick();
         break;
     }
+}
+
+bool task3_is_vertical_ped_waiting(void) {
+    return input_v_ped_req;
+}
+
+bool task3_is_horizontal_ped_waiting(void) {
+    return input_h_ped_req;
 }
