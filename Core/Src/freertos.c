@@ -11,11 +11,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "main.h"
 #include "cmsis_os.h"
-#include <stdbool.h> 
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -42,16 +38,22 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-osSemaphoreId_t buttonSemaphore;
 
+/* USER CODE END Variables */
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* Definitions for Blink1Task */
 osThreadId_t Blink1TaskHandle;
 const osThreadAttr_t Blink1Task_attributes = {
   .name = "Blink1Task",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityLow,
 };
-
 /* Definitions for Blink2Task */
 osThreadId_t Blink2TaskHandle;
 const osThreadAttr_t Blink2Task_attributes = {
@@ -59,53 +61,12 @@ const osThreadAttr_t Blink2Task_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-
 /* Definitions for TriggTask */
 osThreadId_t TriggTaskHandle;
 const osThreadAttr_t TriggTask_attributes = {
   .name = "TriggTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
-};
-
-/* Definitions for InputTimer */
-osTimerId_t inputTimerHandle;
-const osTimerAttr_t inputTimer_attributes = {
-  .name = "InputTimer"
-};
-
-/* Definitions for CommandTask */
-osThreadId_t CommandTaskHandle;
-const osThreadAttr_t CommandTask_attributes = {
-  .name = "CommandTask",
-  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
-};
-
-/* Definitions for PedIndicatorTask */
-osThreadId_t PedIndicatorTaskHandle;
-const osThreadAttr_t PedIndicatorTask_attributes = {
-  .name = "PedIndicatorTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
-};
-
-/* Definitions for TrafficTask */
-osThreadId_t TrafficTaskHandle;
-const osThreadAttr_t TrafficTask_attributes = {
-  .name = "TrafficTask",
-  .stack_size = 256 * 4, // Larger stack for FSM?
-  .priority = (osPriority_t) osPriorityNormal,
-};
-
-/* Definition for InputTimer */
-
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -122,6 +83,9 @@ void PedIndicatorTask(void *argument);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+void Blink1(void *argument);
+void Blink2(void *argument);
+void Trigg(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -136,9 +100,34 @@ void MX_FREERTOS_Init(void) {
   buttonSemaphore = osSemaphoreNew(1, 1, NULL);
   /* USER CODE END Init */
 
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
   /* Create the thread(s) */
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* creation of Blink1Task */
+  Blink1TaskHandle = osThreadNew(Blink1, NULL, &Blink1Task_attributes);
+
+  /* creation of Blink2Task */
+  Blink2TaskHandle = osThreadNew(Blink2, NULL, &Blink2Task_attributes);
+
+  /* creation of TriggTask */
+  TriggTaskHandle = osThreadNew(Trigg, NULL, &TriggTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* creation of Blink1Task */
@@ -166,6 +155,10 @@ void MX_FREERTOS_Init(void) {
   osTimerStart(inputTimerHandle, 10); // 10 ticks = 10ms (assuming 1kHz tick)
 
   /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -264,84 +257,8 @@ void Trigg(void *argument)
   /* USER CODE END Trigg */
 }
 
-/* USER CODE BEGIN Header_InputTimerCallback */
-/**
-* @brief Function implementing the InputTimer callback.
-* Called every 10ms to sample inputs.
-*/
-/* USER CODE END Header_InputTimerCallback */
-void InputTimerCallback(void *argument)
-{
-    // Update Traffic Light Inputs
-    task3_input_update();
-}
+/* Private application code --------------------------------------------------*/
+/* USER CODE BEGIN Application */
 
-/* USER CODE BEGIN Header_CommandTask */
-/**
-* @brief Function implementing the CommandTask thread.
-* Polls UART for configuration commands.
-*/
-/* USER CODE END Header_CommandTask */
-void CommandTask(void *argument)
-{
-  /* USER CODE BEGIN CommandTask */
-  for(;;)
-  {
-      task5_poller(); 
-      osDelay(50); // Yield to other tasks
-  }
-  /* USER CODE END CommandTask */
-}
+/* USER CODE END Application */
 
-/* USER CODE BEGIN Header_TrafficTask */
-/**
-* @brief Function implementing the TrafficTask thread.
-* Runs the Traffic Light State Machine.
-*/
-/* USER CODE END Header_TrafficTask */
-void TrafficTask(void *argument)
-{
-  /* USER CODE BEGIN TrafficTask */
-  for(;;)
-  {
-      task3(); // Run one cycle of FSM (contains delays)
-      // Note: task3() internally uses osDelay now, so it yields.
-      // If task3() returns immediately (e.g. no delay in some path), add safe-guard:
-      osDelay(10); 
-  }
-  /* USER CODE END TrafficTask */
-}
-
-/* USER CODE BEGIN Header_PedIndicatorTask */
-/**
-* @brief Function implementing the PedIndicatorTask thread.
-* Blinks the Pedestrian Wait Lamps if they are waiting.
-*/
-/* USER CODE END Header_PedIndicatorTask */
-void PedIndicatorTask(void *argument)
-{
-  /* USER CODE BEGIN PedIndicatorTask */
-  bool toggle = false;
-  for(;;)
-  {
-      toggle = !toggle;
-
-      // Vertical Pedestrian
-      if (task3_is_vertical_ped_waiting()) {
-          set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, toggle);
-      } else {
-          // Ensure off if not waiting
-           set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, false);
-      }
-
-      // Horizontal Pedestrian
-      if (task3_is_horizontal_ped_waiting()) {
-          set_lamp_pedestrian(TRAFFIC_FLOW_HORIZONTAL, toggle);
-      } else {
-           set_lamp_pedestrian(TRAFFIC_FLOW_HORIZONTAL, false);
-      }
-
-      osDelay(g_toggleFreq);
-  }
-  /* USER CODE END PedIndicatorTask */
-}
