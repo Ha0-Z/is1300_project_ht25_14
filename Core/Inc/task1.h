@@ -10,7 +10,7 @@
 
 /**
 @brief Executes the Pedestrian Control Logic (Task 1).
- @param void
+@param void
 @return void
  */
 void task1(void);

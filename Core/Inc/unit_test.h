@@ -62,16 +62,16 @@ void test_uart_input(void);
 void test_task3(void);
 
 /**
- * @brief Unit test for Task 5 (Configuration & UART).
- * @param None
- * @return None
+@brief Unit test for Task 5 (Configuration & UART).
+@param void
+@return void
  */
 void test_task5(void);
 
 /**
- * @brief Test for the direct LED control functions.
- * @param None
- * @return None
+@brief Test for the direct LED control functions.
+@param void
+@return void
  */
 void test_led_functions(void);
 

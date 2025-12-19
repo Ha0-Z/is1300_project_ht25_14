@@ -1,9 +1,9 @@
-/*
- * task3.c
- *
- * Integrated State Machine with Signal Controller API
- * Date: Dec 19, 2025
- */
+/**
+  * @file task3.c
+  * @brief Traffic Light State Machine implementation.
+  * @date Dec 19, 2025
+  * @author Hao Zhang
+  */
 
 #include "task3.h"
 #include "task3.h"
@@ -14,13 +14,13 @@
 // Assuming your new signal functions are declared here:
 #include "led_driver.h"
 
-// --- Shared Data (Input Interface) ---
-static bool input_v_ped_req = false;   // Latched: True until serviced
-static bool input_h_ped_req = false;   // Latched: True until serviced
-static uint32_t input_v_ped_req_time = 0; // Timestamp of request
-static uint32_t input_h_ped_req_time = 0; // Timestamp of request
-static bool input_v_car_busy = false;  // Instantaneous status
-static bool input_h_car_busy = false;  // Instantaneous status
+// Input State
+static bool input_v_ped_req = false;
+static bool input_h_ped_req = false;
+static uint32_t input_v_ped_req_time = 0;
+static uint32_t input_h_ped_req_time = 0;
+static bool input_v_car_busy = false;
+static bool input_h_car_busy = false;
 
 // --- Internal Logic Variables ---
 static uint32_t v_arrival_time = 0;
@@ -49,9 +49,7 @@ static uint32_t state_entry_time = 0;
 // (g_toggleFreq, g_pedestrianDelay, g_walkingDelay, g_orangeDelay, g_greenDelay, g_redDelayMax)
 
 
-// =========================================================
-// 1. INPUT COLLECTION (Run 100x more often)
-// =========================================================
+// Reads all inputs and updates state variables.
 void task3_input_update(void) {
     // A. Latch Pedestrian Buttons
     if (input_read_pl1()) {
@@ -92,10 +90,7 @@ void task3_input_update(void) {
 // 2. LOGIC HELPER FUNCTIONS
 // =========================================================
 
-/*
- * Blocking sequence to let pedestrians cross.
- * Pauses the traffic logic to ensure safety.
- */
+// Handles the pedestrian crossing sequence.
 static void service_pedestrian_sequence(bool is_vertical_ped) {
 	TrafficFlowDirection flow = (is_vertical_ped) ? TRAFFIC_FLOW_VERTICAL : TRAFFIC_FLOW_HORIZONTAL;
 
@@ -120,9 +115,7 @@ static void service_pedestrian_sequence(bool is_vertical_ped) {
 }
 
 
-// =========================================================
-// 3. MAIN TASK (Run 1x per cycle)
-// =========================================================
+// Main Traffic Light State Machine.
 void task3(void) {
     uint32_t current_time = HAL_GetTick();
     uint32_t time_in_state = current_time - state_entry_time;

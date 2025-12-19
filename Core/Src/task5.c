@@ -1,9 +1,9 @@
-/*
- * task5.c
- *
- *  Created on: Dec 18, 2025
- *      Author: Hao Zhang
- */
+/**
+  * @file task5.c
+  * @brief UART Packet Receiver (Ring Buffer).
+  * @date Dec 18, 2025
+  * @author Hao Zhang
+  */
 
 #include "task5.h"
 #include "config.h"
@@ -23,11 +23,13 @@ static int tail = 0;          // Read Index
 static uint8_t parse_buffer[4];
 static int parse_index = 0;
 
+// Initializes UART reception.
 void task5_uart_init(void) {
     // Start listening for 1 byte
     HAL_UART_Receive_IT(&huart2, &rx_byte, 1);
 }
 
+// Rx Complete Callback. Pushes byte to Ring Buffer.
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == USART2) {
         // Push to Ring Buffer
@@ -41,20 +43,20 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     }
 }
 
+// Polls the ring buffer for valid packets (4 bytes).
 void task5_poller(void) {
-    // 1. Calculate available data in Ring Buffer
-    // Head and Tail are indices 0..63
+    // Calculate available bytes
     int available = (head - tail + RING_BUF_SIZE) % RING_BUF_SIZE;
 
-    // 2. Process ALL full packets available
+    // Process all full packets
     while (available >= 4) {
-        // Peek at the 4 bytes (Handle wrapping manually for each byte)
+        // Peek at the candidate packet
         uint8_t b0 = ring_buffer[(tail + 0) % RING_BUF_SIZE];
         uint8_t b1 = ring_buffer[(tail + 1) % RING_BUF_SIZE];
         uint8_t b2 = ring_buffer[(tail + 2) % RING_BUF_SIZE];
         uint8_t b3 = ring_buffer[(tail + 3) % RING_BUF_SIZE];
 
-        // 3. Check Sync (Byte 1 must be 0x00)
+        // Validate Sync (Byte 1 must be 0x00)
         if (b1 == 0x00) {
             // --- VALID PACKET ---
             uint16_t val = (b2 << 8) | b3;

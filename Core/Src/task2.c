@@ -20,18 +20,17 @@ typedef enum {
   STATE_HORIZONTAL_STOP
 } State_t;
 
-// Helpers to check car presence
-// Returns true if ANY car is on Vertical Lane (TL1 or TL3)
+// Checks if cars are on Vertical Lane (TL1/TL3).
 static bool vertical_cars_present(void) {
   return (!input_read_tl1_car() || !input_read_tl3_car());
 }
 
-// Returns true if ANY car is on Horizontal Lane (TL2 or TL4)
+// Checks if cars are on Horizontal Lane (TL2/TL4).
 static bool horizontal_cars_present(void) {
   return (!input_read_tl2_car() || !input_read_tl4_car());
 }
 
-// Helpers to set lights
+// Light control helpers.
 static void set_vertical_lights(TrafficLightState state) {
   LED_Driver.set_traffic_signal(MODE_TL1, state);
   LED_Driver.set_traffic_signal(MODE_TL3, state);
@@ -46,9 +45,9 @@ void task2(void) {
   LED_Driver_Init();
 
   State_t state = STATE_VERTICAL_PASS;
-  uint32_t state_start_time = HAL_GetTick(); // For greenDelay/Orange logic
-  uint32_t waiter_arrival_time = 0;          // Track when other lane arrived
-  bool waiting = false;                      // Is other lane waiting?
+  uint32_t state_start_time = HAL_GetTick();
+  uint32_t waiter_arrival_time = 0;
+  bool waiting = false;
 
   // Init: Vertical Green, Horizontal Red
   set_vertical_lights(LIGHT_GREEN);

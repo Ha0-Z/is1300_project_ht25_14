@@ -92,8 +92,28 @@ typedef enum {
 } TrafficFlowDirection;
 
 // Direct Control Wrappers
+/**
+@brief Sets the traffic signal for a specific flow direction.
+@param dir Traffic flow direction (VERTICAL or HORIZONTAL).
+@param color New color for the traffic signal.
+@return void
+ */
 void set_signal(TrafficFlowDirection dir, TrafficLightState color);
+
+/**
+@brief Sets the pedestrian signal for a specific flow direction.
+@param dir Traffic flow direction (VERTICAL or HORIZONTAL).
+@param color New color for the pedestrian signal.
+@return void
+ */
 void set_signal_pedestrian(TrafficFlowDirection dir, PedestrianLightState color);
+
+/**
+@brief Sets the pedestrian indicator (blue lamp) for a specific flow direction.
+@param dir Traffic flow direction (VERTICAL or HORIZONTAL).
+@param on True to turn on, False to turn off.
+@return void
+ */
 void set_lamp_pedestrian(TrafficFlowDirection dir, bool on);
 
 /**

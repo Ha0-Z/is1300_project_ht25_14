@@ -23,7 +23,7 @@ typedef enum {
   STATE_CAR_STARTING
 } State_t;
 
-// Helper to set both car lights
+// Sets both car lights.
 static void set_car_lights(TrafficLightState state) {
   if (DIRECTION == 1) {
     LED_Driver.set_traffic_signal(MODE_TL1, state);
@@ -34,7 +34,7 @@ static void set_car_lights(TrafficLightState state) {
   }
 }
 
-// Helper to set pedestrian light
+// Sets pedestrian light.
 static void set_ped_light(PedestrianLightState state) {
   if (DIRECTION == 1) {
     LED_Driver.set_pedestrian_signal(MODE_PL1, state);
@@ -43,7 +43,7 @@ static void set_ped_light(PedestrianLightState state) {
   }
 }
 
-// Helper to set indicator
+// Sets pedestrian indicator.
 static void set_indicator(bool on) {
   if (DIRECTION == 1) {
     LED_Driver.set_pedestrian_indicator(MODE_PL1, on);
@@ -80,7 +80,7 @@ void task1(void) {
 
     switch (state) {
     case STATE_IDLE:
-      // R1.1 Ensure State (Car Green, Ped Red)
+      // Ensure initial state.
       set_car_lights(LIGHT_GREEN);
       set_ped_light(PED_LIGHT_RED);
       set_indicator(false);

@@ -8,7 +8,6 @@
 #include "input.h"
 #include "main.h"
 
-// Helper to read a pin (Active Low)
 static bool is_pressed(GPIO_TypeDef *port, uint16_t pin) {
   return (HAL_GPIO_ReadPin(port, pin) == 0);
 }
@@ -16,7 +15,6 @@ static bool is_pressed(GPIO_TypeDef *port, uint16_t pin) {
 JoystickState input_read_joystick(void) {
   JoystickState state = {0};
 
-  // Joystick Buttons (A, B, C, D, Center)
   state.up = is_pressed(button3_A_GPIO_Port, button3_A_Pin);
   state.down = is_pressed(button3_B_GPIO_Port, button3_B_Pin);
   state.left = is_pressed(button3_C_GPIO_Port, button3_C_Pin);
@@ -34,7 +32,6 @@ bool input_read_pl2(void) {
   return is_pressed(PL2_Switch_GPIO_Port, PL2_Switch_Pin);
 }
 
-// Car Switches (TL1-TL4)
 bool input_read_tl1_car(void) {
   if (HAL_GPIO_ReadPin(TL1_Car_GPIO_Port, TL1_Car_Pin) == 0) {
     return true;

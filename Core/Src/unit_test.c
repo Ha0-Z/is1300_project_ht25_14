@@ -135,28 +135,28 @@ test_led_driver() {
 void test_switches(void) {
   LED_Driver_Init();
   while (1) {
-    // TL1 Switch -> Controls TL1 Signal
+    // TL1 Switch controls TL1.
     if (HAL_GPIO_ReadPin(TL1_Car_GPIO_Port, TL1_Car_Pin) == GPIO_PIN_SET) {
       LED_Driver.set_traffic_signal(MODE_TL1, LIGHT_GREEN);
     } else {
       LED_Driver.set_traffic_signal(MODE_TL1, LIGHT_RED);
     }
 
-    // TL2 Switch -> Controls TL2 Signal
+    // TL2 Switch controls TL2.
     if (HAL_GPIO_ReadPin(TL2_Car_GPIO_Port, TL2_Car_Pin) == GPIO_PIN_SET) {
       LED_Driver.set_traffic_signal(MODE_TL2, LIGHT_GREEN);
     } else {
       LED_Driver.set_traffic_signal(MODE_TL2, LIGHT_RED);
     }
 
-    // TL3 Switch -> Controls TL3 Signal
+    // TL3 Switch controls TL3.
     if (input_read_tl3_car()) {
       LED_Driver.set_traffic_signal(MODE_TL3, LIGHT_GREEN);
     } else {
       LED_Driver.set_traffic_signal(MODE_TL3, LIGHT_RED);
     }
 
-    // TL4 Switch -> Controls TL4 Signal
+    // TL4 Switch controls TL4.
     if (input_read_tl4_car()) {
       LED_Driver.set_traffic_signal(MODE_TL4, LIGHT_GREEN);
     } else {
@@ -207,7 +207,7 @@ void test_task5(void) {
   char msg[128];
   uint32_t last_print = 0;
 
-  // --- PART 1: Logic Verification ---
+  // Part 1: Logic Verification.
   config_init(); // Reset to defaults
 
   snprintf(msg, sizeof(msg), "\r\n=== Task 5 Logic Verification ===\r\n");
@@ -248,7 +248,7 @@ void test_task5(void) {
   }
   HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
 
-  // --- PART 2: Interactive Loop ---
+  // Part 2: Interactive Loop.
   snprintf(msg, sizeof(msg), "\r\n=== Task 5 Logic Verified ===\r\n");
   HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
 

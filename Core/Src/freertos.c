@@ -115,10 +115,20 @@ void Blink1(void *argument);
 void Blink2(void *argument);
 void Trigg(void *argument);
 void InputTimerCallback(void *argument);
-void Trigg(void *argument);
-void InputTimerCallback(void *argument);
+
+/**
+* @brief polls UART for configuration packets.
+*/
 void CommandTask(void *argument);
+
+/**
+* @brief Main Traffic Control Task.
+*/
 void TrafficTask(void *argument);
+
+/**
+* @brief Blinks pedestrian wait lights.
+*/
 void PedIndicatorTask(void *argument);
 /* USER CODE END FunctionPrototypes */
 
@@ -278,47 +288,34 @@ void InputTimerCallback(void *argument)
 }
 
 /* USER CODE BEGIN Header_CommandTask */
-/**
-* @brief Function implementing the CommandTask thread.
-* Polls UART for configuration commands.
-*/
 /* USER CODE END Header_CommandTask */
 void CommandTask(void *argument)
 {
   /* USER CODE BEGIN CommandTask */
-  task5_uart_init(); // Enable Interrupts
+  task5_uart_init();
   for(;;)
   {
       task5_poller(); 
-      osDelay(50); // Yield to other tasks
+      osDelay(50);
   }
   /* USER CODE END CommandTask */
 }
 
 /* USER CODE BEGIN Header_TrafficTask */
-/**
-* @brief Function implementing the TrafficTask thread.
-* Runs the Traffic Light State Machine.
-*/
 /* USER CODE END Header_TrafficTask */
 void TrafficTask(void *argument)
 {
   /* USER CODE BEGIN TrafficTask */
   for(;;)
   {
-      task3(); // Run one cycle of FSM (contains delays)
-      // Note: task3() internally uses osDelay now, so it yields.
-      // If task3() returns immediately (e.g. no delay in some path), add safe-guard:
+      task3(); 
+      // FSM uses internal delays, but yield just in case
       osDelay(10); 
   }
   /* USER CODE END TrafficTask */
 }
 
 /* USER CODE BEGIN Header_PedIndicatorTask */
-/**
-* @brief Function implementing the PedIndicatorTask thread.
-* Blinks the Pedestrian Wait Lamps if they are waiting.
-*/
 /* USER CODE END Header_PedIndicatorTask */
 void PedIndicatorTask(void *argument)
 {
@@ -328,15 +325,12 @@ void PedIndicatorTask(void *argument)
   {
       toggle = !toggle;
 
-      // Vertical Pedestrian
       if (task3_is_vertical_ped_waiting()) {
           set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, toggle);
       } else {
-          // Ensure off if not waiting
            set_lamp_pedestrian(TRAFFIC_FLOW_VERTICAL, false);
       }
 
-      // Horizontal Pedestrian
       if (task3_is_horizontal_ped_waiting()) {
           set_lamp_pedestrian(TRAFFIC_FLOW_HORIZONTAL, toggle);
       } else {

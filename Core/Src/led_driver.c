@@ -85,10 +85,10 @@ static void set_pedestrian_signal_impl(PedestrianDirection dir,
   switch (state) {
   case PED_LIGHT_RED:
     bits = 0b001 << shift;
-    break; // Q3
+    break;
   case PED_LIGHT_GREEN:
     bits = 0b010 << shift;
-    break; // Q4
+    break;
   case PED_LIGHT_OFF:
   default:
     bits = 0;
@@ -116,11 +116,11 @@ static void update_leds_impl(void) {
   tx_buffer[1] = (led_state_buffer >> 8) & 0xFF;  // U2
   tx_buffer[2] = (led_state_buffer >> 0) & 0xFF;  // U1
 
-  // Transmit via SPI
-  // Using hspi3 as seen in freertos.c
+  // Transmit via SPI.
+  // Using hspi3 as seen in freertos.c.
   HAL_SPI_Transmit(&hspi3, tx_buffer, 3, 10);
 
-  // Latch the data
+  // Latch data.
   HAL_GPIO_WritePin(S595_STCP_GPIO_Port, S595_STCP_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(S595_STCP_GPIO_Port, S595_STCP_Pin, GPIO_PIN_RESET);
 }
@@ -145,9 +145,7 @@ const TrafficLightDriver LED_Driver = {
     .set_raw_bits = set_raw_bits_impl};
 
 void LED_Driver_Init(void) {
-  // Ensure Reset pin is high (Active Low reset usually, or check logic)
-  // freertos.c:
-  // HAL_GPIO_WritePin(S595_Reset_GPIO_Port,S595_Reset_Pin,GPIO_PIN_SET);
+  // Ensure Reset pin is high.
   HAL_GPIO_WritePin(S595_Reset_GPIO_Port, S595_Reset_Pin, GPIO_PIN_SET);
 
   // Clear initial state

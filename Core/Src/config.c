@@ -7,7 +7,7 @@
 
 #include "config.h"
 
-// Default Values
+// Default Values.
 #define DEFAULT_TOGGLE_FREQ 500
 #define DEFAULT_PEDESTRIAN_DELAY 4000
 #define DEFAULT_WALKING_DELAY 5000
@@ -15,7 +15,7 @@
 #define DEFAULT_GREEN_DELAY 5000
 #define DEFAULT_RED_DELAY_MAX 10000
 
-// Internal Storage
+// Globals.
 uint32_t g_toggleFreq = DEFAULT_TOGGLE_FREQ;
 uint32_t g_pedestrianDelay = DEFAULT_PEDESTRIAN_DELAY;
 uint32_t g_walkingDelay = DEFAULT_WALKING_DELAY;
@@ -24,7 +24,7 @@ uint32_t g_greenDelay = DEFAULT_GREEN_DELAY;
 uint32_t g_redDelayMax = DEFAULT_RED_DELAY_MAX;
 
 void config_init(void) {
-  // Reset to defaults if needed
+  // Reset defaults.
   g_toggleFreq = DEFAULT_TOGGLE_FREQ;
   g_pedestrianDelay = DEFAULT_PEDESTRIAN_DELAY;
   g_walkingDelay = DEFAULT_WALKING_DELAY;

@@ -16,8 +16,25 @@
 @return void
  */
 void task3(void);
+/**
+@brief Reads all inputs and updates state variables.
+@param void
+@return void
+ */
 void task3_input_update(void);
+
+/**
+@brief Checks if vertical pedestrian button was pressed.
+@param void
+@return true if waiting, false otherwise.
+ */
 bool task3_is_vertical_ped_waiting(void);
+
+/**
+@brief Checks if horizontal pedestrian button was pressed.
+@param void
+@return true if waiting, false otherwise.
+ */
 bool task3_is_horizontal_ped_waiting(void);
 
 #endif /* INC_TASK3_H_ */
