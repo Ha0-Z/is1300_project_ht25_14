@@ -13,6 +13,10 @@
  * @param None
  * @return None
  */
+// Polling function (now processes buffer)
 void task5_poller(void);
+
+// Initialize UART Interrupts
+void task5_uart_init(void);
 
 #endif /* INC_task5_H_ */

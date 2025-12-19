@@ -15,6 +15,7 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+#include "task5.h" // For init
 #include <stdbool.h> 
 
 /* Private includes ----------------------------------------------------------*/
@@ -285,6 +286,7 @@ void InputTimerCallback(void *argument)
 void CommandTask(void *argument)
 {
   /* USER CODE BEGIN CommandTask */
+  task5_uart_init(); // Enable Interrupts
   for(;;)
   {
       task5_poller(); 
