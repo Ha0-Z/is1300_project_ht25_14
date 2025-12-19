@@ -1,0 +1,193 @@
+[33mcommit 670fb4ddec0b0f8006a6f120877c7ae49d1a971c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mrtos_dev[m[33m, [m[1;31morigin/rtos_dev[m[33m)[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 13:56:52 2025 +0100
+
+    Test2
+
+[33mcommit 387f6ea26b743c0eea2644be218390852b4efa5d[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 13:55:22 2025 +0100
+
+    Commit test.
+
+[33mcommit 77a7eeca7f4cf2d460eb5cfa364170293a3557c6[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 13:40:46 2025 +0100
+
+    Fixed error where two switch is on the state will change rapidly.
+
+[33mcommit d8409f6d4cc65dec1bf7070b95aa5fbc17928db4[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 12:41:49 2025 +0100
+
+    From big picture it is ready, still need fix bugs.
+
+[33mcommit d93b57d19a1309df70cced3eeea4becc1b94d4cc[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 12:16:55 2025 +0100
+
+    Embedded task 3 and task 5 into rtos.
+
+[33mcommit 580f2546962af4d82ac6846e0c97d8cd61d4bb4b[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 11:44:32 2025 +0100
+
+    Made the rtos lab work.
+
+[33mcommit d34c4f68bf3b8beb7904f14d197a3e33d9566e1d[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 09:28:21 2025 +0100
+
+    Should be done with all tasks.
+
+[33mcommit 5bda98a43b9f12553ea13702a0748274c30aa1e1[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 09:17:28 2025 +0100
+
+    Rework with the task3. Fixed R2.
+
+[33mcommit 2333f5a42b89fca9375b00d86f19ff745017cfd9[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 08:02:32 2025 +0100
+
+    Find and solve issue with input.
+
+[33mcommit cbec048c9ff0fae4d9932aa45b6eceee4e394e8c[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 07:47:13 2025 +0100
+
+    Update the led driver. make it more usable
+
+[33mcommit 3e117e4e2842b79239cf3d83a737162332254b10[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Fri Dec 19 04:51:50 2025 +0100
+
+    Solved the task 5 completely.
+
+[33mcommit 98783c3e83125bb023dfecedbda5dbec52453149[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 23:04:48 2025 +0100
+
+    Fix some bugs.
+
+[33mcommit 6357a0fcb49f6b9fcbb0ccd2b7339606a584a601[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 17:23:40 2025 +0100
+
+    Fix Doxygen code convention issue.
+
+[33mcommit 144a0ab643535d958fb96ad20c639f12d6dc06e5[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 16:48:59 2025 +0100
+
+    Remove screen and traffic_fsm since they are not relevant anymore
+
+[33mcommit 73efbb582737a6b7b3f6691219fc4434c4526957[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 16:28:09 2025 +0100
+
+    Solved input problem.
+
+[33mcommit 50f5d8bdb28ba39e83cf0c4c6651343aad519705[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 15:52:33 2025 +0100
+
+    First version of task3. Need to fix button input.
+
+[33mcommit 91fa0f65894a5a4d0e84cec629727e445988e467[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 15:18:11 2025 +0100
+
+    Created config.c which is a solution to task 5. Not working yet
+
+[33mcommit e2cf384f22d09b9a859bdefc80fbb60e127d188b[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 14:48:26 2025 +0100
+
+    Done with unit test for uart both output and input.
+
+[33mcommit 393dc7d525a2ff5ea9e74a611894bf6b0ec36f4e[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 12:51:58 2025 +0100
+
+    Done with task 2.
+
+[33mcommit bed1d281e828abac5ecfcb153badd65511446069[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 11:36:51 2025 +0100
+
+    Done with task 1 with simple approach.
+
+[33mcommit 839ad3f31eeb8a88625786eb65697dd097d2c242[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 02:40:41 2025 +0100
+
+    Done with unit test of the switch.
+
+[33mcommit d7ce60293223c26fab96317a0a2a2da56d6bf76e[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 01:19:51 2025 +0100
+
+    Update the input module. Create joycon(Not in use).
+
+[33mcommit 33784f5d766526d5087127819e206df41156cd4f[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 00:57:18 2025 +0100
+
+    Re map the pin index.
+
+[33mcommit b1da40c4ca358457c078cd6d33ce7a8f6a28249c[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Thu Dec 18 00:22:00 2025 +0100
+
+    Tried oled but not working.
+
+[33mcommit eab6aa79962bfde7f606507e99b3308219d0f1ae[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Wed Dec 17 22:18:03 2025 +0100
+
+    Add unit test for pedestrian.
+
+[33mcommit 4faddba2b115d65e5b8d8fe70b4f770877ea2e19[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Wed Dec 17 21:53:34 2025 +0100
+
+    Verified all leds is working.
+
+[33mcommit c1bae2451fb0c4cedc030a186115744bc78f046a[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Wed Dec 17 21:47:53 2025 +0100
+
+    Solved the unit test problem.
+    
+    ( hal was not init, unit_test started before hal init)
+
+[33mcommit 4c09fd49c5b29376f0d93b097bfa595eb1c8d507[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Wed Dec 17 21:45:42 2025 +0100
+
+    Unit test failed to do. but the code is working.
+
+[33mcommit a297f7b584a22a6eb8ab3066e4af76801727074e[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Wed Dec 17 20:47:17 2025 +0100
+
+    Set up the traffic lights as method which I can call. And tested them correctly
+
+[33mcommit f5a48c71447cd87c816db50b1d4f98b47c3f9071[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Wed Dec 17 16:03:25 2025 +0100
+
+    Fixs the spelling of gitignore. And clear the cache.
+
+[33mcommit c8fb645db090b2b7d89976ec3971b9ac1f59e175[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Wed Dec 17 15:59:15 2025 +0100
+
+    Add new gitingnore law, then removed all cached data and added them back.
+
+[33mcommit c83efbe4493950e1dc74481a45506e30a4434b00[m
+Author: Hao Zhang <inbox@haozhang.se>
+Date:   Wed Dec 17 11:33:25 2025 +0100
+
+    Rebuild the project and uploaded updated the files
