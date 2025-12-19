@@ -7,6 +7,7 @@
 
 #include "task3.h"
 #include "main.h"       // For HAL_Delay, HAL_GetTick
+#include "cmsis_os.h"   // For osDelay
 #include "input.h"      // For button reading
 // Assuming your new signal functions are declared here:
 #include "led_driver.h"
@@ -50,7 +51,7 @@ static uint32_t state_entry_time = 0;
 // =========================================================
 // 1. INPUT COLLECTION (Run 100x more often)
 // =========================================================
-void collectInput(void) {
+void task3_input_update(void) {
     // A. Latch Pedestrian Buttons
     if (input_read_pl1()) {
         input_v_ped_req = true;
@@ -100,7 +101,7 @@ static void service_pedestrian_sequence(bool is_vertical_ped) {
     set_signal_pedestrian(flow, PED_LIGHT_GREEN);
     
     // 3. Blocking Delay (Freeze system for safety)
-    HAL_Delay(WALKING_DELAY_MS);
+    osDelay(WALKING_DELAY_MS);
 
     // 4. Turn off Walk Signal (Back to Red)
     set_signal_pedestrian(flow, PED_LIGHT_RED);
@@ -229,7 +230,7 @@ void task3(void) {
         // 2.7 Skip the delay
         if (!skip_yellow) {
         	// 2.3
-            HAL_Delay(ORANGE_DELAY_MS);
+            osDelay(ORANGE_DELAY_MS);
         }
         skip_yellow = false;
 
@@ -313,7 +314,7 @@ void task3(void) {
         // Vertical stays Red automatically
 
         if (!skip_yellow) {
-            HAL_Delay(ORANGE_DELAY_MS);
+            osDelay(ORANGE_DELAY_MS);
         }
         skip_yellow = false;
 

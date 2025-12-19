@@ -14,5 +14,6 @@
 @return void
  */
 void task3(void);
+void task3_input_update(void);
 
 #endif /* INC_TASK3_H_ */

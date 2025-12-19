@@ -16,6 +16,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led_driver.h"
+#include "task3.h" // For task3_input_update
+#include "task5.h" // For task5_poller
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,7 +62,30 @@ const osThreadAttr_t TriggTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
-/* USER CODE END Variables */
+
+/* Definitions for InputTimer */
+osTimerId_t inputTimerHandle;
+const osTimerAttr_t inputTimer_attributes = {
+  .name = "InputTimer"
+};
+
+/* Definitions for CommandTask */
+osThreadId_t CommandTaskHandle;
+const osThreadAttr_t CommandTask_attributes = {
+  .name = "CommandTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+
+/* Definitions for TrafficTask */
+osThreadId_t TrafficTaskHandle;
+const osThreadAttr_t TrafficTask_attributes = {
+  .name = "TrafficTask",
+  .stack_size = 256 * 4, // Larger stack for FSM?
+  .priority = (osPriority_t) osPriorityNormal,
+};
+
+/* Definition for InputTimer */
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -75,6 +100,11 @@ const osThreadAttr_t defaultTask_attributes = {
 void Blink1(void *argument);
 void Blink2(void *argument);
 void Trigg(void *argument);
+void InputTimerCallback(void *argument);
+void Trigg(void *argument);
+void InputTimerCallback(void *argument);
+void CommandTask(void *argument);
+void TrafficTask(void *argument);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -105,6 +135,19 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of TriggTask */
   TriggTaskHandle = osThreadNew(Trigg, NULL, &TriggTask_attributes);
+
+  /* creation of CommandTask */
+  CommandTaskHandle = osThreadNew(CommandTask, NULL, &CommandTask_attributes);
+
+  /* creation of TrafficTask */
+  TrafficTaskHandle = osThreadNew(TrafficTask, NULL, &TrafficTask_attributes);
+
+  /* Create InputTimer (10ms periodic) */
+  inputTimerHandle = osTimerNew(InputTimerCallback, osTimerPeriodic, NULL, &inputTimer_attributes);
+  
+  /* Start InputTimer */
+  osTimerStart(inputTimerHandle, 10); // 10 ticks = 10ms (assuming 1kHz tick)
+
   /* USER CODE END RTOS_THREADS */
 
 }
@@ -202,4 +245,52 @@ void Trigg(void *argument)
     osDelay(20); // Debounce / Polling rate
   }
   /* USER CODE END Trigg */
+}
+
+/* USER CODE BEGIN Header_InputTimerCallback */
+/**
+* @brief Function implementing the InputTimer callback.
+* Called every 10ms to sample inputs.
+*/
+/* USER CODE END Header_InputTimerCallback */
+void InputTimerCallback(void *argument)
+{
+    // Update Traffic Light Inputs
+    task3_input_update();
+}
+
+/* USER CODE BEGIN Header_CommandTask */
+/**
+* @brief Function implementing the CommandTask thread.
+* Polls UART for configuration commands.
+*/
+/* USER CODE END Header_CommandTask */
+void CommandTask(void *argument)
+{
+  /* USER CODE BEGIN CommandTask */
+  for(;;)
+  {
+      task5_poller(); 
+      osDelay(50); // Yield to other tasks
+  }
+  /* USER CODE END CommandTask */
+}
+
+/* USER CODE BEGIN Header_TrafficTask */
+/**
+* @brief Function implementing the TrafficTask thread.
+* Runs the Traffic Light State Machine.
+*/
+/* USER CODE END Header_TrafficTask */
+void TrafficTask(void *argument)
+{
+  /* USER CODE BEGIN TrafficTask */
+  for(;;)
+  {
+      task3(); // Run one cycle of FSM (contains delays)
+      // Note: task3() internally uses osDelay now, so it yields.
+      // If task3() returns immediately (e.g. no delay in some path), add safe-guard:
+      osDelay(10); 
+  }
+  /* USER CODE END TrafficTask */
 }
