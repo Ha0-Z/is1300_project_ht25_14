@@ -184,7 +184,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1000);
+    osDelay(7777);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -199,7 +199,7 @@ void Blink1(void *argument)
 {
   /* USER CODE BEGIN Blink1 */
   TickType_t xLastWakeTime;
-  const TickType_t xPeriod = pdMS_TO_TICKS(100); // 100ms period
+  const TickType_t xPeriod = pdMS_TO_TICKS(8888); // 100ms period
   xLastWakeTime = xTaskGetTickCount();
 
   for(;;)
@@ -232,7 +232,7 @@ void Blink2(void *argument)
     {
         // Toggle USR_LED1 (PB2) if available
         HAL_GPIO_TogglePin(USR_LED1_GPIO_Port, USR_LED1_Pin);
-        osDelay(500); 
+        osDelay(9999);
     }
   /* USER CODE END Blink2 */
 }

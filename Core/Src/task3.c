@@ -211,18 +211,6 @@ void task3(void) {
 				}
 			}
 
-
-
-//        // Condition A: Gap Logic (Vertical Empty + Others Waiting)
-//        if (!input_v_car_busy && (input_h_car_busy || time_in_state > MIN_GREEN_MS)) {
-//            switch_direction = true;
-//            // Optional: If V is empty and H is waiting, we could set skip_yellow = true;
-//        }
-//        // Condition B: Fairness / Max Wait
-//        else if (h_wait_time > MAX_RED_WAIT_MS) {
-//            switch_direction = true;
-//        }
-//
         if (switch_direction) {
             current_state = STATE_VERTICAL_STOP;
             state_entry_time = current_time;
@@ -238,6 +226,11 @@ void task3(void) {
 
         // 2.7 Skip the delay
         if (!skip_yellow) {
+        	// Reset V arrival time if still busy (Wait time starts NOW)
+        	if(input_v_car_busy) {
+        		v_arrival_time = HAL_GetTick();
+        	}
+        	
         	// 2.3
             osDelay(g_orangeDelay); // Use Config
         }
@@ -300,15 +293,6 @@ void task3(void) {
         	}
         }
 
-//        // Condition A: Gap Logic
-//        if (!input_h_car_busy && (input_v_car_busy || time_in_state > MIN_GREEN_MS)) {
-//            switch_h = true;
-//        }
-//        // Condition B: Fairness
-//        else if (v_wait_time > MAX_RED_WAIT_MS) {
-//            switch_h = true;
-//        }
-//
         if (switch_direction) {
             current_state = STATE_HORIZONTAL_STOP;
             state_entry_time = current_time;
@@ -323,6 +307,11 @@ void task3(void) {
         // Vertical stays Red automatically
 
         if (!skip_yellow) {
+            // Reset H arrival time if still busy
+        	if(input_h_car_busy) {
+        		h_arrival_time = HAL_GetTick();
+        	}
+        	
             osDelay(g_orangeDelay);
         }
         skip_yellow = false;
