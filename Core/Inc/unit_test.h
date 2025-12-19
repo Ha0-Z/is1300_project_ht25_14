@@ -48,25 +48,11 @@ void test_inputs(void);
 void test_uart(void);
 
 /**
-@brief UART echo test to verify receive and transmit.
+@brief UART echo back the received data.
 @param void
 @return void
  */
 void test_uart_input(void);
-
-/**
-@brief Unit test for configuration logic validation.
-@param void
-@return void
- */
-void test_config_logic(void);
-
-/**
-@brief Interactive test for UART configuration updates.
-@param void
-@return void
- */
-void test_config_uart(void);
 
 /**
 @brief Runs the integrated Task 3 loop (Traffic Control).
@@ -74,5 +60,12 @@ void test_config_uart(void);
 @return void
  */
 void test_task3(void);
+
+/**
+ * @brief Unit test for Task 5 (Configuration & UART).
+ * @param None
+ * @return None
+ */
+void test_task5(void);
 
 #endif /* INC_UNIT_TEST_H_ */

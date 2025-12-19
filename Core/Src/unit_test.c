@@ -11,7 +11,7 @@
 #include "task1.h"
 #include "task2.h"
 #include "task3.h"
-#include "task_config.h"
+#include "task5.h"
 #include "usart.h"
 #include <stdio.h>
 #include <string.h>
@@ -23,13 +23,12 @@ void Test_program(void) {
   // test_joystick();
   // test_switches();
   // test_uart();
-  test_uart_input();
-  // test_config_logic();
+//  test_uart_input();
 
   // task1();
   // task2();
   // test_task3();
-  // test_config_uart();
+   test_task5();
 }
 
 void test_leds(void) {
@@ -184,14 +183,34 @@ void test_uart_input(void) {
   while (1) {
     if (HAL_UART_Receive(&huart2, &RxData, 1, 5000) == HAL_OK) {
       HAL_UART_Transmit(&huart2, &RxData, 1, 10);
-      HAL_UART_Transmit(&huart2, Test, sizeof(Test), 10);
+//      HAL_UART_Transmit(&huart2, Test, sizeof(Test), 10);
     }
   }
 }
 
-void test_config_logic(void) {
-  char msg[128];
+void test_task3(void) {
+  LED_Driver_Init();
   config_init();
+
+  while (1) {
+    task3();
+
+    // Also allow configuration updates during runtime
+    task5_poller();
+
+    HAL_Delay(100);
+  }
+}
+
+void test_task5(void) {
+  char msg[128];
+  uint32_t last_print = 0;
+
+  // --- PART 1: Logic Verification ---
+  config_init(); // Reset to defaults
+
+  snprintf(msg, sizeof(msg), "\r\n=== Task 5 Logic Verification ===\r\n");
+  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
 
   // 1. Valid Update: Toggle Freq
   if (config_set_value(CONFIG_ID_TOGGLE_FREQ, 1000) && g_toggleFreq == 1000) {
@@ -203,11 +222,9 @@ void test_config_logic(void) {
 
   // 2. Invalid Update: Pedestrian Delay too short (must be > Orange Delay 2000)
   if (!config_set_value(CONFIG_ID_PEDESTRIAN_DELAY, 1500)) {
-    snprintf(msg, sizeof(msg),
-             "[PASS] Invalid Ped Delay rejected (Correct)\r\n");
+    snprintf(msg, sizeof(msg), "[PASS] Invalid Ped Delay rejected (Correct)\r\n");
   } else {
-    snprintf(msg, sizeof(msg),
-             "[FAIL] Invalid Ped Delay 1500 was accepted!\r\n");
+    snprintf(msg, sizeof(msg), "[FAIL] Invalid Ped Delay 1500 was accepted!\r\n");
   }
   HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
 
@@ -229,45 +246,28 @@ void test_config_logic(void) {
              "[FAIL] Invalid Orange Delay 6000 was accepted!\r\n");
   }
   HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
-}
 
-void test_config_uart(void) {
-  char msg[128];
-  uint32_t last_print = 0;
+  // --- PART 2: Interactive Loop ---
+  snprintf(msg, sizeof(msg), "\r\n=== Task 5 Logic Verified ===\r\n");
+  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
 
-  // Print Instructions
   snprintf(msg, sizeof(msg),
-           "\r\n--- UART Config Test ---\r\nSend 4-byte packets to change "
-           "values.\r\n");
+           "\r\n--- Entering UART Config Mode ---\r\nSend 4-byte packets to "
+           "change values.\r\n");
   HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
 
   while (1) {
     // Poll for config commands
-    task_config_poller();
 
-    // Print current values
-    if ((HAL_GetTick() - last_print) > 2000) {
-      snprintf(msg, sizeof(msg),
-               "TogFreq: %lu, PedDel: %lu, WalkDel: %lu, OrDel: %lu\r\n",
-               g_toggleFreq, g_pedestrianDelay, g_walkingDelay, g_orangeDelay);
-      HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
-      last_print = HAL_GetTick();
+    while((HAL_GetTick() - last_print) < 2000) {
+    	task5_poller();
     }
 
+    snprintf(msg, sizeof(msg),
+                   "TogFreq: %lu, PedDel: %lu, WalkDel: %lu, OrDel: %lu\r\n",
+                   g_toggleFreq, g_pedestrianDelay, g_walkingDelay, g_orangeDelay);
+          HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), 100);
+          last_print = HAL_GetTick();
     HAL_Delay(10);
-  }
-}
-
-void test_task3(void) {
-  LED_Driver_Init();
-  config_init();
-
-  while (1) {
-    task3();
-
-    // Also allow configuration updates during runtime
-    task_config_poller();
-
-    HAL_Delay(100);
   }
 }
