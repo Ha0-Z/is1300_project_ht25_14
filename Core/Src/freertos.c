@@ -59,26 +59,24 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for Blink1Task */
-osThreadId_t Blink1TaskHandle;
-const osThreadAttr_t Blink1Task_attributes = {
-  .name = "Blink1Task",
+/* Definitions for Task3 */
+osThreadId_t Task3Handle;
+const osThreadAttr_t Task3_attributes = {
+  .name = "Task3",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal1,
+};
+/* Definitions for Task5 */
+osThreadId_t Task5Handle;
+const osThreadAttr_t Task5_attributes = {
+  .name = "Task5",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for Blink2Task */
-osThreadId_t Blink2TaskHandle;
-const osThreadAttr_t Blink2Task_attributes = {
-  .name = "Blink2Task",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
-};
-/* Definitions for TriggTask */
-osThreadId_t TriggTaskHandle;
-const osThreadAttr_t TriggTask_attributes = {
-  .name = "TriggTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+/* Definitions for uartQueue */
+osMessageQueueId_t uartQueueHandle;
+const osMessageQueueAttr_t uartQueue_attributes = {
+  .name = "uartQueue"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,9 +85,8 @@ void wait_cycles(uint32_t n);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
-void Blink1(void *argument);
-void Blink2(void *argument);
-void Trigg(void *argument);
+void StartTask3(void *argument);
+void StartTask5(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -115,6 +112,10 @@ void MX_FREERTOS_Init(void) {
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* creation of uartQueue */
+  uartQueueHandle = osMessageQueueNew (16, sizeof(uint8_t), &uartQueue_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -123,14 +124,11 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* creation of Blink1Task */
-  Blink1TaskHandle = osThreadNew(Blink1, NULL, &Blink1Task_attributes);
+  /* creation of Task3 */
+  Task3Handle = osThreadNew(StartTask3, NULL, &Task3_attributes);
 
-  /* creation of Blink2Task */
-  Blink2TaskHandle = osThreadNew(Blink2, NULL, &Blink2Task_attributes);
-
-  /* creation of TriggTask */
-  TriggTaskHandle = osThreadNew(Trigg, NULL, &TriggTask_attributes);
+  /* creation of Task5 */
+  Task5Handle = osThreadNew(StartTask5, NULL, &Task5_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -159,66 +157,40 @@ void StartDefaultTask(void *argument)
   /* USER CODE END StartDefaultTask */
 }
 
-/* USER CODE BEGIN Header_Blink1 */
+/* USER CODE BEGIN Header_StartTask3 */
 /**
- * @brief Function implementing the Blink1Task thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_Blink1 */
-void Blink1(void *argument)
+* @brief Function implementing the Task3 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask3 */
+void StartTask3(void *argument)
 {
-  /* USER CODE BEGIN Blink1 */
+  /* USER CODE BEGIN StartTask3 */
   /* Infinite loop */
-  for (;;) {
+  for(;;)
+  {
     osDelay(1);
   }
-  /* USER CODE END Blink1 */
+  /* USER CODE END StartTask3 */
 }
 
-/* USER CODE BEGIN Header_Blink2 */
+/* USER CODE BEGIN Header_StartTask5 */
 /**
- * @brief Function implementing the Blink2Task thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_Blink2 */
-void Blink2(void *argument)
+* @brief Function implementing the Task5 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask5 */
+void StartTask5(void *argument)
 {
-  /* USER CODE BEGIN Blink2 */
+  /* USER CODE BEGIN StartTask5 */
   /* Infinite loop */
-  for (;;) {
-    varBlink2 = 1;
-    wait_cycles(400000);
-    varBlink2 = 0;
-    vTaskDelay(20);
+  for(;;)
+  {
+    osDelay(1);
   }
-  /* USER CODE END Blink2 */
-}
-
-/* USER CODE BEGIN Header_Trigg */
-/**
- * @brief Function implementing the TriggTask thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_Trigg */
-void Trigg(void *argument)
-{
-  /* USER CODE BEGIN Trigg */
-  /* Infinite loop */
-  for (;;) {
-    TickType_t xLastWakeTime;
-    const TickType_t xPeriod = pdMS_TO_TICKS(200); // ms to ticks
-    // Initialise the xLastWakeTime variable with the current time.
-    xLastWakeTime = xTaskGetTickCount();
-    /* Infinite loop */
-    for (;;) {
-      vTaskDelayUntil(&xLastWakeTime, xPeriod);
-      wait_cycles(10); // add a breakpoint in this line
-    }
-  }
-  /* USER CODE END Trigg */
+  /* USER CODE END StartTask5 */
 }
 
 /* Private application code --------------------------------------------------*/
