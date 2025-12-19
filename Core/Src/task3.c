@@ -70,12 +70,12 @@ void collectInput(void) {
     // C. Update Arrival Timers (Edge Detection)
     uint32_t now = HAL_GetTick();
     
-    if (input_v_car_busy && !v_busy_prev) {
+    if ((input_v_ped_req || input_v_car_busy) && !v_busy_prev) {
         v_arrival_time = now;
     }
     v_busy_prev = input_v_car_busy;
 
-    if (input_h_car_busy && !h_busy_prev) {
+    if ((input_h_ped_req || input_h_car_busy) && !h_busy_prev) {
         h_arrival_time = now;
     }
     h_busy_prev = input_h_car_busy;
@@ -154,7 +154,6 @@ void task3(void) {
         set_signal(TRAFFIC_FLOW_VERTICAL, LIGHT_GREEN);
         set_signal(TRAFFIC_FLOW_HORIZONTAL, LIGHT_RED);
 
-        v_arrival_time = HAL_GetTick();
 
         // 1. Check & Service Horizontal Pedestrians (Opposite flow)
         if (input_h_ped_req) {
@@ -163,7 +162,7 @@ void task3(void) {
         }
 
         // 2. Check Switching Conditions
-        bool switch_v = false;
+        bool switch_direction = false;
 
 
 
@@ -173,34 +172,48 @@ void task3(void) {
         		// 2.5
         		// Do nothing
         	} else {
-        		switch_v = true;
+        		switch_direction = true;
         	}
         }
 
         // 2.6
         if (input_v_car_busy && input_h_car_busy) {
         	if(h_wait_time > MAX_RED_WAIT_MS) {
-        		switch_v = true;
+        		switch_direction = true;
         	}
         }
 
         // 2.7
         if (!input_v_car_busy && input_h_car_busy) {
-        	switch_v = true;
+        	switch_direction = true;
         	skip_yellow = true;
         }
 
+        if (input_v_ped_req) {
+				if (input_v_car_busy) {
+					// If the opposite way is busy wait to max red.
+					if(v_wait_time > MAX_RED_WAIT_MS) {
+						switch_direction = true;
+					}
+				} else {
+					// If the opposite way is not busy change direct.
+					switch_direction = true;
+				}
+			}
+
+
+
 //        // Condition A: Gap Logic (Vertical Empty + Others Waiting)
 //        if (!input_v_car_busy && (input_h_car_busy || time_in_state > MIN_GREEN_MS)) {
-//            switch_v = true;
+//            switch_direction = true;
 //            // Optional: If V is empty and H is waiting, we could set skip_yellow = true;
 //        }
 //        // Condition B: Fairness / Max Wait
 //        else if (h_wait_time > MAX_RED_WAIT_MS) {
-//            switch_v = true;
+//            switch_direction = true;
 //        }
 //
-        if (switch_v) {
+        if (switch_direction) {
             current_state = STATE_VERTICAL_STOP;
             state_entry_time = current_time;
         }
@@ -230,8 +243,6 @@ void task3(void) {
         set_signal(TRAFFIC_FLOW_HORIZONTAL, LIGHT_GREEN);
         set_signal(TRAFFIC_FLOW_VERTICAL, LIGHT_RED);
 
-        h_arrival_time = HAL_GetTick();
-
 
         // 1. Check & Service Vertical Pedestrians (Opposite flow)
         if (input_v_ped_req) {
@@ -240,8 +251,6 @@ void task3(void) {
 
         // 2. Check Switching Conditions
 
-        bool switch_h = false;
-
 
         // 2.4
         if (time_in_state > MIN_GREEN_MS) {
@@ -249,7 +258,7 @@ void task3(void) {
         		// 2.5
         		// Do nothing
         	} else {
-        		switch_v = true;
+        		switch_direction = true;
         	}
 
 
@@ -258,18 +267,28 @@ void task3(void) {
         // 2.6
         if (input_h_car_busy && input_v_car_busy) {
         	if(v_wait_time > MAX_RED_WAIT_MS) {
-        		switch_v = true;
+        		switch_direction = true;
         	}
         }
 
         // 2.7
         if (!input_h_car_busy && input_v_car_busy) {
-        	switch_v = true;
+        	switch_direction = true;
         	skip_yellow = true;
         }
 
         // Make sure provide ability for pedestrian to walk if one way is always busy
-
+        if (input_h_ped_req) {
+        	if (input_h_car_busy) {
+        		// If the opposite way is busy wait to max red.
+        		if(h_wait_time > MAX_RED_WAIT_MS) {
+					switch_direction = true;
+				}
+        	} else {
+        		// If the opposite way is not busy change direct.
+        		switch_direction = true;
+        	}
+        }
 
 //        // Condition A: Gap Logic
 //        if (!input_h_car_busy && (input_v_car_busy || time_in_state > MIN_GREEN_MS)) {
@@ -280,7 +299,7 @@ void task3(void) {
 //            switch_h = true;
 //        }
 //
-        if (switch_v) {
+        if (switch_direction) {
             current_state = STATE_HORIZONTAL_STOP;
             state_entry_time = current_time;
         }
