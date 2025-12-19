@@ -19,7 +19,7 @@
 void Test_program(void) {
   // test_leds();
   // test_led_driver();
-   test_led_functions();
+//   test_led_functions();
   // test_inputs();
   // test_joystick();
   // test_switches();
@@ -28,7 +28,7 @@ void Test_program(void) {
 
   // task1();
   // task2();
-  // test_task3();
+   test_task3();
   // test_task5();
 }
 
@@ -191,15 +191,15 @@ void test_uart_input(void) {
 
 void test_task3(void) {
   LED_Driver_Init();
-  config_init();
 
   while (1) {
+	  for(int i = 0; i < 10; i++) {
+		  collectInput(); // Updates internal latches/variables
+		  HAL_Delay(1);   // Simulate small time gap
+	  }
     task3();
 
-    // Also allow configuration updates during runtime
-    task5_poller();
-
-    HAL_Delay(100);
+    HAL_Delay(50);
   }
 }
 
